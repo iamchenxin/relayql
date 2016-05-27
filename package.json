@@ -1,0 +1,24 @@
+{
+  "name": "relayql",
+  "version": "0.0.1",
+  "description": "the subset of GraphQL used by Relay",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iamchenxin/relayql.git"
+  },
+  "keywords": [
+    "relay",
+    "graphql",
+    "react"
+  ],
+  "author": "iamchenxin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/iamchenxin/relayql/issues"
+  },
+  "homepage": "https://github.com/iamchenxin/relayql#readme"
+}
