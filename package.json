@@ -1,0 +1,57 @@
+{
+  "name": "relayql",
+  "version": "0.0.1",
+  "description": "the subset of GraphQL used by Relay",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run jest",
+    "jest": "NODE_ENV=test jest $@",
+    "lint": "node_modules/.bin/eslint .",
+    "lint2": "node_modules/eslint/bin/eslint.js .",
+    "bnode": "NODE_ENV=dev babel-node",
+    "check": "flow check"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iamchenxin/relayql.git"
+  },
+  "keywords": [
+    "relay",
+    "graphql",
+    "react"
+  ],
+  "author": "iamchenxin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/iamchenxin/relayql/issues"
+  },
+  "homepage": "https://github.com/iamchenxin/relayql#readme",
+  "dependencies": {
+    "babel-plugin-transform-runtime": "^6.9.0",
+    "babel-runtime": "^6.9.2",
+    "flow-dynamic": "file:///home/iamchenxin/project/lang/flow-dynamic",
+    "flow-graphql": "file:///home/iamchenxin/project/tmp/graphpub/flow-graphql6"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.10.1",
+    "babel-core": "^6.10.4",
+    "babel-eslint": "^6.1.0",
+    "babel-jest": "^13.0.0",
+    "babel-plugin-transform-flow-strip-types": "^6.8.0",
+    "babel-polyfill": "^6.9.1",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-fbjs": "^2.0.0",
+    "babel-preset-stage-0": "^6.5.0",
+    "eslint": "^2.13.1",
+    "eslint-plugin-babel": "^3.3.0",
+    "eslint-plugin-flow-vars": "^0.4.0",
+    "eslint-plugin-flowtype": "^2.3.0",
+    "fbjs-scripts": "^0.7.1",
+    "flow-bin": "^0.27.0",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-rename": "^1.2.2",
+    "gulp-sourcemaps": "^1.6.0",
+    "jest-cli": "^13.0.0"
+  }
+}
