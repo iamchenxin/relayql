@@ -17,7 +17,7 @@ import type {
   GraphQLResolveInfo
 } from 'flow-graphql';
 
-type NonNullRelayType = GraphQLNonNull<GraphQLScalarType|GraphQLEnumType>;
+type NonNullRelayType = GraphQLNonNull<GraphQLScalarType<*>|GraphQLEnumType>;
 
 type TypeResolverFn = (source: {id: string}) => ?GraphQLObjectType;
 type ResolverFn = (source:Object, args:Object, context: mixed, info:GraphQLResolveInfo)
@@ -32,6 +32,25 @@ type RelayField<TYPE> = {
   resolve:ResolverFn
 };
 
+/**
+ * Used while defining GraphQL types to allow for circular references in
+ * otherwise immutable type definitions.
+ */
+export type Thunk<T> = (() => T) | T;
+
+function resolveThunk<T>(thunk: Thunk<T>): T {
+  return typeof thunk === 'function' ? thunk() : thunk;
+}
+
+/*
+export type GraphQLObjectTypeConfig<TSource> = {
+  name: string;
+  interfaces?: Thunk<?Array<GraphQLInterfaceType>>;
+  fields: Thunk<GraphQLFieldConfigMap<TSource>>;
+  isTypeOf?: ?GraphQLIsTypeOfFn;
+  description?: ?string
+}
+*/
 
 export type {
   TypeResolverFn,

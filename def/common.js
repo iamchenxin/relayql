@@ -17,7 +17,7 @@ import type {
   GraphQLResolveInfo
 } from 'flow-graphql';
 
-type NonNullRelayType = GraphQLNonNull<GraphQLScalarType|GraphQLEnumType>;
+type NonNullRelayType = GraphQLNonNull<GraphQLScalarType<*>|GraphQLEnumType>;
 
 type TypeResolverFn = (object: any) => ?GraphQLObjectType;
 type ResolverFn = (source:Object, args:Object, context: mixed, info:GraphQLResolveInfo)

@@ -9,18 +9,22 @@ import {
   GraphQLNonNull,
   GraphQLID,
   GraphQLScalarType,
-  GraphQLObjectType
+  GraphQLObjectType,
+  GraphQLList,
+  GraphQLString
 } from 'flow-graphql';
 
 import type {
   GraphQLResolveInfo,
-  GraphQLFieldConfig
+  GraphQLFieldConfig,
+  GraphQLIsTypeOfFn
 } from 'flow-graphql';
 
 import type {
   TypeResolverFn,
   ResolverFn,
-  RelayField
+  RelayField,
+  Thunk
 } from '../def/common.js';
 
 import type {
@@ -46,7 +50,7 @@ type NodeTypeResolverFn = (source: {_resolvedId: ResolvedGID})
   => ?GraphQLObjectType;
 // Make a Relay's Node Interface
 // A interface is used to dynamic resolve to a certain Type,like other language
-function RelayQLNodeMaker(typeResolver:NodeTypeResolverFn)
+function relayQLNodeMaker(typeResolver:NodeTypeResolverFn)
 :GraphQLInterfaceType {
   const rt = new GraphQLInterfaceType({
     name: 'Node',
@@ -71,15 +75,31 @@ function RelayQLNodeMaker(typeResolver:NodeTypeResolverFn)
 }
 
 
+type RelayQLFieldConfigMap<TSource, TResult> = {
+  id:GraphQLFieldConfig<*, *>,
+  [fieldName: string]: GraphQLFieldConfig<TSource, TResult>;
+};
+type RelayQLNodableTypeConfig<TSource, TResult> = {
+  name: string,
+  interfaces: Thunk<?Array<GraphQLInterfaceType>>;
+  fields: Thunk<RelayQLFieldConfigMap<TSource, TResult>>;
+  isTypeOf?: ?GraphQLIsTypeOfFn;
+  description?: ?string
+}
+function relayQLNodableType<TSource, TResult>(
+config: RelayQLNodableTypeConfig<TSource, TResult>) {
+  return new GraphQLObjectType(config);
+}
+
 type GetDataByRGIDFn = (resolvedId:ResolvedGID, context: mixed,
   info: GraphQLResolveInfo) => {[key:string]:mixed} ;
 
 // Make a field,which used Node,as a interface to get any type extend from Node.
 // accept a args(id: string) id is globalid , resolve a ResolvedGID to downsteam
 // it is most used as a top-level source.
-function RelayQLNodeField(nodeItf:GraphQLInterfaceType,
+function relayQLNodeField(nodeItf:GraphQLInterfaceType,
 resolver:GetDataByRGIDFn, idDecoder?: (gid:string) => ResolvedGID)
-:GraphQLFieldConfig {
+:GraphQLFieldConfig<*, *> {
   return {
     name: 'node',
     description: 'Fetches an object given its ID',
@@ -103,12 +123,16 @@ resolver:GetDataByRGIDFn, idDecoder?: (gid:string) => ResolvedGID)
   };
 }
 
+
 export type {
+  RelayQLFieldConfigMap,
+  RelayQLNodableTypeConfig,
   NodeTypeResolverFn,
   GetDataByRGIDFn
 };
 
 export {
-  RelayQLNodeMaker,
-  RelayQLNodeField
+  relayQLNodeMaker,
+  relayQLNodableType
+  relayQLNodeField,
 };

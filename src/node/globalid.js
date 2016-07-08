@@ -70,7 +70,7 @@ type GIDEncodeFn = (source:{id:string}, args:mixed,
  */
 function RelayQLIdField(
   typenameOrResolver?: string|GIDEncodeFn
-):RelayField< GraphQLNonNull<GraphQLScalarType> > {
+):RelayField< GraphQLNonNull<GraphQLScalarType<*>> > {
   let defaultResolver:GIDEncodeFn;
   // in javascript typeof null === 'object',so ...
   if (typenameOrResolver === null) {
