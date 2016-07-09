@@ -75,19 +75,19 @@ function relayQLNodeMaker(typeResolver:NodeTypeResolverFn)
 }
 
 
-type RelayQLFieldConfigMap<TSource, TResult> = {
-  id:GraphQLFieldConfig<*, *>,
-  [fieldName: string]: GraphQLFieldConfig<TSource, TResult>;
+type RelayQLFieldConfigMap<TSource> = {
+  id:GraphQLFieldConfig<*>,
+  [fieldName: string]: GraphQLFieldConfig<TSource>;
 };
-type RelayQLNodableTypeConfig<TSource, TResult> = {
+type RelayQLNodableTypeConfig<TSource> = {
   name: string,
   interfaces: Thunk<?Array<GraphQLInterfaceType>>;
-  fields: Thunk<RelayQLFieldConfigMap<TSource, TResult>>;
+  fields: Thunk<RelayQLFieldConfigMap<TSource>>;
   isTypeOf?: ?GraphQLIsTypeOfFn;
   description?: ?string
 }
-function relayQLNodableType<TSource, TResult>(
-config: RelayQLNodableTypeConfig<TSource, TResult>) {
+function relayQLNodableType<TSource>(
+config: RelayQLNodableTypeConfig<TSource>) {
   return new GraphQLObjectType(config);
 }
 
@@ -99,7 +99,7 @@ type GetDataByRGIDFn = (resolvedId:ResolvedGID, context: mixed,
 // it is most used as a top-level source.
 function relayQLNodeField(nodeItf:GraphQLInterfaceType,
 resolver:GetDataByRGIDFn, idDecoder?: (gid:string) => ResolvedGID)
-:GraphQLFieldConfig<*, *> {
+:GraphQLFieldConfig<*> {
   return {
     name: 'node',
     description: 'Fetches an object given its ID',
