@@ -1,5 +1,5 @@
 [ignore]
-.*/__tests__/.*
+.*/src/\(connection\|def\|utils\|node\)/__tests__/.*
 .*/__mocks__/.*
 .*/node_modules/fbjs/.*
 [include]

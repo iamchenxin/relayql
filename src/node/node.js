@@ -76,7 +76,7 @@ function relayQLNodeMaker(typeResolver:NodeTypeResolverFn)
 
 
 type RelayQLFieldConfigMap<TSource> = {
-  id:GraphQLFieldConfig<*>,
+  id:GraphQLFieldConfig<TSource>,
   [fieldName: string]: GraphQLFieldConfig<TSource>;
 };
 type RelayQLNodableTypeConfig<TSource> = {
@@ -92,7 +92,10 @@ config: RelayQLNodableTypeConfig<TSource>) {
 }
 
 type GetDataByRGIDFn = (resolvedId:ResolvedGID, context: mixed,
-  info: GraphQLResolveInfo) => {[key:string]:mixed} ;
+  info: GraphQLResolveInfo) => {
+    id: string,
+    [key:string]:mixed
+  } ;
 
 // Make a field,which used Node,as a interface to get any type extend from Node.
 // accept a args(id: string) id is globalid , resolve a ResolvedGID to downsteam
@@ -133,6 +136,6 @@ export type {
 
 export {
   relayQLNodeMaker,
-  relayQLNodableType
+  relayQLNodableType,
   relayQLNodeField,
 };

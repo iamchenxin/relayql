@@ -13,13 +13,18 @@ import type {
   TypeResolverFn,
   ResolverFn,
   RelayField,
-  GraphQLResolveInfo
 } from '../def/common.js';
 
 import {
   GraphQLNonNull,
   GraphQLID,
   GraphQLScalarType
+} from 'flow-graphql';
+
+import type {
+  GraphQLResolveInfo,
+  GraphQLFieldConfig,
+  GraphQLIsTypeOfFn
 } from 'flow-graphql';
 
 import {
@@ -56,8 +61,8 @@ function decodeId(globalId: string): ResolvedGID {
   };
 }
 
-type GIDEncodeFn = (source:{id:string}, args:mixed,
-  context: mixed, info:GraphQLResolveInfo) => mixed;
+type GIDEncodeFn = (source:{id:string}, args:{[argName: string]: mixed},
+  context: mixed, info:GraphQLResolveInfo) => string;
 /**
  * Creates the configuration for an id field on a node-extend type.
  * Basicly it maps a server data (typeName,id) => globalId (client data)
@@ -68,9 +73,9 @@ type GIDEncodeFn = (source:{id:string}, args:mixed,
  * by calling idFetcher on the object, or if not provided, by accessing the `id`
  * property on the object.
  */
-function RelayQLIdField(
+function relayQLIdField(
   typenameOrResolver?: string|GIDEncodeFn
-):RelayField< GraphQLNonNull<GraphQLScalarType<*>> > {
+):GraphQLFieldConfig< * > {
   let defaultResolver:GIDEncodeFn;
   // in javascript typeof null === 'object',so ...
   if (typenameOrResolver === null) {
@@ -113,5 +118,5 @@ export type {
 export {
   encodeId,
   decodeId,
-  RelayQLIdField
+  relayQLIdField
 };

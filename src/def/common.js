@@ -20,8 +20,9 @@ import type {
 type NonNullRelayType = GraphQLNonNull<GraphQLScalarType<*>|GraphQLEnumType>;
 
 type TypeResolverFn = (source: {id: string}) => ?GraphQLObjectType;
-type ResolverFn = (source:Object, args:Object, context: mixed, info:GraphQLResolveInfo)
- => mixed;
+type ResolverFn<TSource, TResult> = (
+  source:TSource, args:{[argName: string]: mixed},
+  context: mixed, info:GraphQLResolveInfo) => TResult;
 type CusTomType = GraphQLInterfaceType|GraphQLObjectType;
 
 type RelayField<TYPE> = {
@@ -29,7 +30,7 @@ type RelayField<TYPE> = {
   description: string,
   type: TYPE,
   args?: {[key:string]:Object},
-  resolve:ResolverFn
+  resolve:ResolverFn<*, *>
 };
 
 /**
@@ -59,4 +60,8 @@ export type {
   CusTomType,
   NonNullRelayType,
   GraphQLResolveInfo
+};
+
+export {
+  resolveThunk
 };
