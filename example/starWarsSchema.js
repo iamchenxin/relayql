@@ -169,8 +169,7 @@ var factionType = relayQLNodableType({
       type: shipConnection,
       description: 'The ships used by the faction.',
       args: 'all',
-      resolve: (faction: FactionDT,
-        args: ConnectionArgsJS): ConnectionJS<*> => {
+      resolve: (faction, args) => {
         return {
           pageInfo:{
             startCursor: null,
