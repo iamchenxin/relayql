@@ -184,7 +184,6 @@ var factionType = relayQLNodableType({
         const range = decodeConnectionArgs(args,ships.length);
         const edges = edgesFromArray(ships, range);
         const pageInfo = pageInfoFromArray(edges, range, ships.length);
-
         return {
           pageInfo:pageInfo,
           edges:edges,

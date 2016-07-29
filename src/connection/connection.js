@@ -174,7 +174,7 @@ function relayQLConnectionField<TSource>(config: ConnectionFieldConfig<TSource>)
       after: undefableString(args.after),
       first: undefableInt(args.first, 'args.frist must be int'),
       before: undefableString(args.before),
-      last: undefableInt(args.first, 'args.last must be int')
+      last: undefableInt(args.last, 'args.last must be int')
     }),
     config.resolve
   );

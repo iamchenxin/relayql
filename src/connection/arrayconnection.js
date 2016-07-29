@@ -128,14 +128,32 @@ export function getOffsetWithDefault(
 
 function decodeConnectionArgs(_args:ConnectionArgsJS,
   maxLength:number): ArrayRange{
-
-  if (_args.hasOwnProperty('after')) {
-    const args:ForwardArgsJS =(_args: any);
+  if (typeof _args.first === 'number') {
+    const args = {
+      first:_args.first,
+      after:_args.after
+    };
     const length = utils.clip(args.first, {
       intervals:'[]', min:1, max:maxLength
     }, 1);
-    const after = cursorToOffset(args.after);
-    let start = after;
+    let start = args.after?cursorToOffset(args.after):0;
+    start = utils.clip(start, {
+      intervals:'[]', min:0, max:maxLength-1
+    }, 0);
+    return {
+      start,
+      length
+    };
+  } else if (typeof _args.last === 'number') {
+    const args = {
+      last:_args.last,
+      before:_args.before
+    };
+    const length = utils.clip(args.last, {
+      intervals:'[]', min:1, max:maxLength
+    }, 1);
+    const before = args.before? cursorToOffset(args.before): maxLength-1;
+    let start = before - length;
     start = utils.clip(start, {
       intervals:'[]', min:0, max:maxLength-1
     }, 0);
@@ -144,18 +162,9 @@ function decodeConnectionArgs(_args:ConnectionArgsJS,
       length
     };
   } else {
-    const args:BackwardArgsJS =(_args: any);
-    const length = utils.clip(args.last, {
-      intervals:'[]', min:1, max:maxLength
-    }, 1);
-    const before = cursorToOffset(args.before);
-    let start = before - length;
-    start = utils.clip(start, {
-      intervals:'[]', min:0, max:maxLength-1
-    }, 0);
     return {
-      start,
-      length
+      start: 0,
+      length: maxLength
     };
   }
 }
