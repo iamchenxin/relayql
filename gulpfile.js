@@ -2,49 +2,60 @@
 var gulp=require('gulp');
 var babel=require('gulp-babel');
 var sourcemaps=require('gulp-sourcemaps');
-//var rename = require('gulp-rename');
+var rename = require('gulp-rename');
 var path=require('path');
 var gutil =require('gulp-util');
 const fbjsConfigure = require('babel-preset-fbjs/configure');
 
 
-gulp.task('server', function() {
-  return stdGulpTrans('src/server', 'dst/server');
+gulp.task('lib', function() {
+  return stdGulpTrans('src', 'lib');
 });
 
-gulp.task('common', function() {
+gulp.task('flow', function() {
+  return flowType('src', 'lib');
+});
+
+gulp.task('build', ['lib', 'flow'], function() {
   return stdGulpTrans('src/common', 'dst/common');
 });
 
-gulp.task('all', ['common', 'server'], function() {
-  gutil.log('all...............');
-
-});
-
-gulp.task('clean-src', function() {
-  rmdir(['src/client/app']);
+gulp.task('clean', function() {
+  return rmdir([
+    'lib',
+    'index.js',
+    'index.js.flow',
+    'index.js.map',
+  ] );
 });
 
 // ........functions .......
+function flowType(src, dst) {
+  var srcPath = [src+'/**/*.js',
+    '!'+src+'/**/__tests__/**', '!'+src+'/**/__mocks__/**'];
+  return gulp
+    .src(srcPath)
+    .pipe(rename({extname: '.js.flow'}))
+    .pipe(gulp.dest(dst));
+}
+
 var fs = require('fs');
 function rmdir(pathNames) {
   pathNames.forEach(function(pathName) {
-    var stat = fs.statSync(pathName);
+    if (!fs.existsSync(pathName)) { return; }
+    const stat = fs.statSync(pathName);
     if ( stat.isFile()) {
       rmfile(pathName);
-      console.log('delete file : ' + pathName);
     }
     if (stat.isDirectory()) {
-      var subPaths = fs.readdirSync(pathName)
+      const subPaths = fs.readdirSync(pathName)
         .map(function(subPathName) {
           return path.resolve(pathName, subPathName);
         });
       rmdir(subPaths);
       fs.rmdirSync(pathName);
-      console.log('delete DIR : ' + pathName);
     }
   });
-
   function rmfile(name) {
     fs.unlinkSync(name);
   }

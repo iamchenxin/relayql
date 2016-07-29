@@ -126,7 +126,7 @@ export function getOffsetWithDefault(
 }
 
 
-export function decodeConnectionArgs(_args:ConnectionArgsJS,
+function decodeConnectionArgs(_args:ConnectionArgsJS,
   maxLength:number): ArrayRange{
 
   if (_args.hasOwnProperty('after')) {
@@ -183,8 +183,16 @@ node: GraphQLFieldConfig<TSource>): GraphQLObjectType {
 }
 */
 
+function edgesFromArray<T: NodeJS>(data: Array<T>, range: ArrayRange)
+: EdgeJS<T>[] {
+  return data.map((v,index) => ({
+    cursor: offsetToCursor(range.start + index),
+    node: v
+  }));
+}
+
 function pageInfoFromArray(edges: EdgeJS<*>[],
-  edgesRange: ArrayRange, dataRange: ArrayRange) {
+  edgesRange: ArrayRange, dataLength: number) {
   if( edges.length <= 0 ) {
     return {
       startCursor: null,
@@ -197,7 +205,7 @@ function pageInfoFromArray(edges: EdgeJS<*>[],
       startCursor: edges[0].cursor,
       endCursor: edges[edges.length - 1].cursor,
       hasPreviousPage: edgesRange.start > 0,
-      hasNextPage: (edgesRange.start + edgesRange.length) < dataRange.length
+      hasNextPage: (edgesRange.start + edgesRange.length) < dataLength
     };
   }
 }
@@ -222,5 +230,7 @@ function arrayConnectionField<TSource>(
 
 export {
   pageInfoFromArray,
-  arrayConnectionField
+  arrayConnectionField,
+  edgesFromArray,
+  decodeConnectionArgs
 } ;

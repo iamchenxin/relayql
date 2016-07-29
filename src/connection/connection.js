@@ -1,6 +1,4 @@
 /** @flow
- *  Copyright (c) 2015, Facebook, Inc.
- *  All rights reserved.
  *
  * The GraphQL connections type
  */
@@ -52,7 +50,8 @@ const {
   argsCheck,
   isString,
   isNumber,
-  undefable
+  undefable,
+  nullable
 } = pro;
 /**
  * The common page info type used by all connections.

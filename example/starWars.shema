@@ -1,0 +1,60 @@
+
+
+interface Node {
+  id: ID!
+}
+
+type Ship implements Node {
+  id: ID!
+  name: String
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+type ShipEdge {
+  node: Ship
+  cursor: String!
+}
+
+type ShipConnection {
+  pageInfo: PageInfo!
+  edges: [ShipEdge]
+}
+
+type Faction implements Node {
+  id: ID!
+  name: String
+  ships(after: String, first: Int, before: String, last: Int): ShipConnection
+}
+
+type Query {
+  rebels: Faction
+  empire: Faction
+  node(id: ID!): Node
+}
+
+input IntroduceShipInput {
+  shipName: String!
+  factionId: ID!
+  clientMutationId: String!
+}
+
+type IntroduceShipPayload {
+  ship: Ship
+  faction: Faction
+  clientMutationId: String!
+}
+
+type Mutation {
+  introduceShip(input: IntroduceShipInput!): IntroduceShipPayload
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+}

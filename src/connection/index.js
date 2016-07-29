@@ -12,10 +12,21 @@ import {
   relayQLConnectionField
 } from './connection.js';
 
+import {
+  pageInfoFromArray,
+  arrayConnectionField,
+  edgesFromArray,
+  decodeConnectionArgs
+} from './arrayconnection.js';
+
 // -------------- export
 
 export {
   relayEdgeMaker,
   releyQLConnectionMaker,
-  relayQLConnectionField
+  relayQLConnectionField,
+  pageInfoFromArray,
+  arrayConnectionField,
+  edgesFromArray,
+  decodeConnectionArgs
 } ;

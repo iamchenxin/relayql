@@ -9,7 +9,8 @@ import {
   GraphQLScalarType,
   GraphQLObjectType,
   GraphQLList,
-  GraphQLString
+  GraphQLString,
+  GraphQLSchema
 } from 'flow-graphql';
 
 import type {
@@ -43,7 +44,11 @@ import {
 import {
   relayEdgeMaker,
   releyQLConnectionMaker,
-  relayQLConnectionField
+  relayQLConnectionField,
+  pageInfoFromArray,
+  arrayConnectionField,
+  edgesFromArray,
+  decodeConnectionArgs
 } from '../src/connection/index.js';
 
 import type {
@@ -54,6 +59,10 @@ import type {
   ConnectionJS,
   ConnectionArgsJS,
 } from '../src/def/datastructure.js';
+
+import {
+  mutationWithClientMutationId
+} from '../src/mutation/mutation.js';
 
 
 
@@ -156,6 +165,7 @@ const shipType = relayQLNodableType({
   interfaces: [nodeInterface]
 });
 
+
 var factionType = relayQLNodableType({
   name: 'Faction',
   description: 'A faction in the Star Wars saga',
@@ -169,21 +179,17 @@ var factionType = relayQLNodableType({
       type: shipConnection,
       description: 'The ships used by the faction.',
       args: 'all',
-      resolve: (faction, args) => {
+      resolve: (source:FactionDT, args) => {
+        const ships = source.ships.map(shipId => getShip(shipId));
+        const range = decodeConnectionArgs(args,ships.length);
+        const edges = edgesFromArray(ships, range);
+        const pageInfo = pageInfoFromArray(edges, range, ships.length);
+
         return {
-          pageInfo:{
-            startCursor: null,
-            endCursor: null,
-            hasPreviousPage: false,
-            hasNextPage: false
-          },
-          edges:[{
-            node:{
-              id: 'test'
-            },
-            cursor: 'fortest',
-          }]
+          pageInfo:pageInfo,
+          edges:edges,
         };
+
       },
     }),
   }),
@@ -192,3 +198,70 @@ var factionType = relayQLNodableType({
 
 const shipEdge = relayEdgeMaker(shipType);
 const shipConnection = releyQLConnectionMaker(shipEdge);
+
+const queryType = new GraphQLObjectType({
+  name: 'Query',
+  fields: () => ({
+    rebels: {
+      type: factionType,
+      resolve: () => getRebels(),
+    },
+    empire: {
+      type: factionType,
+      resolve: () => getEmpire(),
+    },
+    node: relayQLNodeField(nodeInterface, (_resolvedId) => {
+      switch (_resolvedId.type) {
+        case 'Faction':
+          return getFaction(_resolvedId.id);
+        case 'Ship':
+        default:
+          return getShip(_resolvedId.id);
+      }
+    })
+  })
+});
+
+const introduceShip = mutationWithClientMutationId({
+  name: 'IntroduceShip',
+  inputFields: {
+    shipName: {
+      type: new GraphQLNonNull(GraphQLString)
+    },
+    factionId: {
+      type: new GraphQLNonNull(GraphQLID)
+    }
+  },
+  payloadFields: {
+    ship: {
+      type: shipType,
+      resolve: (payload) => getShip(payload.shipId)
+    },
+    faction: {
+      type: factionType,
+      resolve: (payload) => getFaction(payload.factionId)
+    }
+  },
+  mutateAndGetPayload: ({shipName, factionId}) => {
+    var newShip = createShip(shipName, factionId);
+    return {
+      shipId: newShip.id,
+      factionId: factionId,
+    };
+  }
+});
+
+const mutationType = new GraphQLObjectType({
+  name: 'Mutation',
+  fields: () => ({
+    introduceShip: introduceShip
+  })
+});
+/**
+ * Finally, we construct our schema (whose starting query type is the query
+ * type we defined above) and export it.
+ */
+export const StarWarsSchema = new GraphQLSchema({
+  query: queryType,
+  mutation: mutationType
+});
