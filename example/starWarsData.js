@@ -17,12 +17,12 @@
 
 var xwing = {
   id: '1',
-  name: 'X-Wing',
+  name: 'X-Wing-Jim',
 };
 
 var ywing = {
   id: '2',
-  name: 'Y-Wing',
+  name: 'Y-Wing-Mike',
 };
 
 var awing = {
