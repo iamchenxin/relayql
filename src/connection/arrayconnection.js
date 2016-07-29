@@ -194,7 +194,8 @@ node: GraphQLFieldConfig<TSource>): GraphQLObjectType {
 
 function edgesFromArray<T: NodeJS>(data: Array<T>, range: ArrayRange)
 : EdgeJS<T>[] {
-  return data.map((v,index) => ({
+  const slice = data.slice(range.start,range.start+range.length);
+  return slice.map((v,index) => ({
     cursor: offsetToCursor(range.start + index),
     node: v
   }));
