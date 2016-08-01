@@ -115,23 +115,13 @@ describe('arrayconnection', () => {
         .toThrowError(RelayQLError, decodeErrMsg(10, 6, 15, 6, 7) );
     });
 
-  });
-  it('decodeConnectionArgs', () => {
-    // after, first, before, last
-    expect( testDecodeArgs(1, 5, 3, 2) ).toEqual({ start: 2, length: 1 });
-    expect( testDecodeArgs(1, 5, 5, 3) ).toEqual({ start: 2, length: 3 });
-    expect( () => { testDecodeArgs(1, 5, 1, 2); } )
-      .toThrowError(RelayQLError, decodeErrMsg(1, 5, 1, 2) );
-    expect( () => { testDecodeArgs(1, 1, 5, 2); } )
-      .toThrowError(RelayQLError, decodeErrMsg(1, 1, 5, 2) );
-    expect( testDecodeArgs(1, 6, null, 3) ).toEqual({ start: 4, length: 3 });
-    expect( () => { testDecodeArgs(-1, 6, -5, 6); } )
-      .toThrowError(RelayQLError, decodeErrMsg(-1, 6, -5, 6) );
-//    expect( testDecodeArgs(-1, -9, 6, 3) ).toEqual({ start: 0, length: 0 });
-//    expect( testDecodeArgs(10, 19, -6, -3) ).toEqual({ start: 0, length: 0 });
-//    expect( testDecodeArgs(1, 6, -6, -3) ).toEqual({ start: 0, length: 0 });
-  });
+    it('if first or last > maxLength, just treated as maxLength', () => {
+      expect(testDecodeArgs(1, 999, 5, 999))
+        .toEqual({ start: 2, length: 3 });
+      expect(testDecodeArgs(1, 999, 5, 2))
+        .toEqual({ start: 3, length: 2 });
+    });
 
-
+  });
 
 });

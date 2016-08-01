@@ -20,7 +20,14 @@ function eFormat(v:mixed):string {
     { showHidden: true, depth: null });
 }
 
+export default function invariant(condition: mixed, message: string) {
+  if (!condition) {
+    throw new RelayQLError(message);
+  }
+}
+
 export {
   RelayQLError,
-  eFormat
+  eFormat,
+  invariant
 };

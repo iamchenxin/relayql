@@ -42,7 +42,8 @@ import {
 
 import {
   RelayQLError,
-  eFormat
+  eFormat,
+  invariant
 } from '../utils/error.js';
 
 import {
@@ -129,8 +130,14 @@ export function getOffsetWithDefault(
   return isNaN(offset) ? defaultOffset : offset;
 }
 
-function clip(v: ?number, range: Range, _default: number) {
+function clip(v: ?number, range: Range, _default: number): number {
   return v? utils.clip(v, range, _default) : _default;
+}
+
+function testRange(v: number, interval: '[]'|'()'|'[)'|'(]', minMax: number[])
+: boolean {
+  return utils.testRange(v,
+    {interval:interval, min:minMax[0], max: minMax[1]});
 }
 
 /*
@@ -145,21 +152,12 @@ function clip(v: ?number, range: Range, _default: number) {
  * The PageInfo section goes into more detail here.
  * NOTE: after and before is a open interval '()'.
 **/
-type OpenInterval = {
-  start: number,
-  end: number
-};
-type NumberedArgs = {
-  after: number,
-  first: number,
-  before: number,
-  last: number,
-};
-// [a,b,c,d,e,f,g]  after:0,before:4
-// the return is stardard javascript Array Range which start is including.
+/* decodeConnectionArgs()
+ * decode ConnectionArgsJS to a ArrayRange ( a  stardard javascript Array Range
+ * which start is including )
+**/
 function decodeConnectionArgs(_args:ConnectionArgsJS,
   maxLength:number): ArrayRange {
-  // after and before is a open interval '()'.
   // the default value for _args .
   const _defaultArgs = {
     after: -1, // so its -1 here,to include index 0
@@ -168,33 +166,25 @@ function decodeConnectionArgs(_args:ConnectionArgsJS,
     last: maxLength,
   };
   const args = setDefault(_args,_defaultArgs);
-  // to closed interval '[]', because first and last is closed interval
+  invariant ( args.first >= 0 && args.last >= 0 ,
+    `first and last must >= 0, with ${formatArgs(_args)}`);
+  // after and before is a open interval '()',so convert to a closed interval '[]'
+  // because first and last is a closed interval
   const start = args.after + 1;
   const end = args.before - 1;
-  if ( // if out of range ,throw error
-    utils.testRange(start,
-      {interval:'[]', min:0, max: maxLength-1} ) != true ||
-    utils.testRange(end,
-      {interval:'[]', min:start, max: maxLength-1} ) != true
-   ) {
-    throw new RelayQLError(formatArgs(_args));
-  }
-  const count = end - start + 1; // number of element between after&before
-  const first = clip(args.first, {
-    interval:'[]', min:0, max:count
-  }, count);
-  const last = clip(args.last, {
-    interval:'[]', min:0, max:count
-  }, count);
+  // start must in [0,maxLength-1] ,end must be in [start, maxLength-1]
+  invariant(
+    testRange(start, '[]', [0, maxLength-1]) &&
+    testRange(end, '[]', [start, maxLength-1])
+    , formatArgs(_args) );
+  // number of element between after&before
+  const count = end - start + 1;
+  // if first or last > count, set them to count.
+  const first = (args.first > count)? count: args.first;
+  const last = (args.last > count)? count: args.last;
   const intersect = first + last - count;
-
-  if ( first < 0 || last < 0 ) { // 4.3 Pagination algorithm
-    throw new RelayQLError(`first and last must >= 0, with first:${first},` +
-    `last:${last}`);
-  }
-  if ( intersect <= 0 ) { // not intersect
-    throw new RelayQLError(formatArgs(_args));
-  }
+  // if not intersect,means out of range too.
+  invariant( intersect > 0 , formatArgs(_args));
 
   return {
     start: start + (count - last) ,
@@ -214,6 +204,12 @@ function formatArgs(args:ConnectionArgsJS) {
   return msg;
 }
 // setDefault
+type NumberedArgs = {
+  after: number,
+  first: number,
+  before: number,
+  last: number,
+};
 function setDefault(_args:ConnectionArgsJS, _defaultArgs:NumberedArgs)
 : NumberedArgs {
   return {
