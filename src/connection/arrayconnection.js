@@ -1,11 +1,6 @@
 /* @flow */
 /**
- *  Copyright (c) 2015, Facebook, Inc.
- *  All rights reserved.
- *
- *  This source code is licensed under the BSD-style license found in the
- *  LICENSE file in the root directory of this source tree. An additional grant
- *  of patent rights can be found in the PATENTS file in the same directory.
+ * Specification: https://facebook.github.io/relay/graphql/connections.htm
  */
 
  import {
@@ -46,10 +41,19 @@ import {
 } from '../utils/base64.js';
 
 import {
+  RelayQLError,
+  eFormat
+} from '../utils/error.js';
+
+import {
   pro,
   utils
 } from 'flow-dynamic';
 const {check} = pro;
+
+import type {
+  Range
+} from 'flow-dynamic';
 
 import type {
   NodeJS,
@@ -98,14 +102,14 @@ var PREFIX = 'arrayconnection:';
 /**
  * Creates the cursor string from an offset.
  */
-export function offsetToCursor(offset: number): ConnectionCursorJS {
+function offsetToCursor(offset: number): ConnectionCursorJS {
   return base64(PREFIX + offset);
 }
 
 /**
  * Rederives the offset from the cursor string.
  */
-export function cursorToOffset(cursor: ConnectionCursorJS): number {
+function cursorToOffset(cursor: ConnectionCursorJS): number {
   return parseInt(unbase64(cursor).substring(PREFIX.length), 10);
 }
 
@@ -125,48 +129,99 @@ export function getOffsetWithDefault(
   return isNaN(offset) ? defaultOffset : offset;
 }
 
+function clip(v: ?number, range: Range, _default: number) {
+  return v? utils.clip(v, range, _default) : _default;
+}
 
+/*
+ * Pagination algorithm.
+ *
+ * To determine what edges to return, the connection evaluates the before and
+ * after cursors to filter the edges, then evaluates first to slice the edges,
+ * then last to slice the edges.
+
+ * NOTE: Including a value for both first and last is strongly discouraged,
+ * as it is likely to lead to confusing queries and results.
+ * The PageInfo section goes into more detail here.
+ * NOTE: after and before is a open interval '()'.
+**/
+type OpenInterval = {
+  start: number,
+  end: number
+};
+type NumberedArgs = {
+  after: number,
+  first: number,
+  before: number,
+  last: number,
+};
+// [a,b,c,d,e,f,g]  after:0,before:4
+// the return is stardard javascript Array Range which start is including.
 function decodeConnectionArgs(_args:ConnectionArgsJS,
-  maxLength:number): ArrayRange{
-  if (typeof _args.first === 'number') {
-    const args = {
-      first:_args.first,
-      after:_args.after
-    };
-    const length = utils.clip(args.first, {
-      intervals:'[]', min:1, max:maxLength
-    }, 1);
-    let start = args.after?cursorToOffset(args.after):0;
-    start = utils.clip(start, {
-      intervals:'[]', min:0, max:maxLength-1
-    }, 0);
-    return {
-      start,
-      length
-    };
-  } else if (typeof _args.last === 'number') {
-    const args = {
-      last:_args.last,
-      before:_args.before
-    };
-    const length = utils.clip(args.last, {
-      intervals:'[]', min:1, max:maxLength
-    }, 1);
-    const before = args.before? cursorToOffset(args.before): maxLength-1;
-    let start = before - length;
-    start = utils.clip(start, {
-      intervals:'[]', min:0, max:maxLength-1
-    }, 0);
-    return {
-      start,
-      length
-    };
-  } else {
-    return {
-      start: 0,
-      length: maxLength
-    };
+  maxLength:number): ArrayRange {
+  // after and before is a open interval '()'.
+  // the default value for _args .
+  const _defaultArgs = {
+    after: -1, // so its -1 here,to include index 0
+    first: maxLength,
+    before: maxLength, // so its maxLength here too
+    last: maxLength,
+  };
+  const args = setDefault(_args,_defaultArgs);
+  // to closed interval '[]', because first and last is closed interval
+  const start = args.after + 1;
+  const end = args.before - 1;
+  if ( // if out of range ,throw error
+    utils.testRange(start,
+      {interval:'[]', min:0, max: maxLength-1} ) != true ||
+    utils.testRange(end,
+      {interval:'[]', min:start, max: maxLength-1} ) != true
+   ) {
+    throw new RelayQLError(formatArgs(_args));
   }
+  const count = end - start + 1; // number of element between after&before
+  const first = clip(args.first, {
+    interval:'[]', min:0, max:count
+  }, count);
+  const last = clip(args.last, {
+    interval:'[]', min:0, max:count
+  }, count);
+  const intersect = first + last - count;
+
+  if ( first < 0 || last < 0 ) { // 4.3 Pagination algorithm
+    throw new RelayQLError(`first and last must >= 0, with first:${first},` +
+    `last:${last}`);
+  }
+  if ( intersect <= 0 ) { // not intersect
+    throw new RelayQLError(formatArgs(_args));
+  }
+
+  return {
+    start: start + (count - last) ,
+    length: intersect
+  }
+}
+
+// for error output
+function formatArgs(args:ConnectionArgsJS) {
+  let msg = 'Out of range: with Args(';
+  msg += args.after?`after:${cursorToOffset(args.after)},`
+    :`after:${eFormat(args.after)},`;
+  msg += `first:${eFormat(args.first)},`;
+  msg += args.before?`before:${cursorToOffset(args.before)},`
+    :`before:${eFormat(args.before)},`;
+  msg += `last:${eFormat(args.last)}).`;
+  return msg;
+}
+// setDefault
+function setDefault(_args:ConnectionArgsJS, _defaultArgs:NumberedArgs)
+: NumberedArgs {
+  return {
+    after: _args.after? cursorToOffset(_args.after): _defaultArgs.after,
+    first: _args.first? _args.first: _defaultArgs.first,
+    before: _args.before? cursorToOffset(_args.before): _defaultArgs.before,
+    last: _args.last? _args.last: _defaultArgs.last
+  };
 }
 /*
 function arrayRelayEdgeMaker<TSource>(name:string,
@@ -242,5 +297,7 @@ export {
   pageInfoFromArray,
   arrayConnectionField,
   edgesFromArray,
-  decodeConnectionArgs
+  decodeConnectionArgs,
+  cursorToOffset,
+  offsetToCursor
 } ;

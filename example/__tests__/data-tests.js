@@ -22,6 +22,6 @@ import {
 describe('Basic usage for graphql', () => {
   it('', () => {
     const rt = encodeId('name', 'ST8523');
-    expect(rt).toEqual('aaaa');
+    expect(rt).toEqual('bmFtZTpTVDg1MjM=');
   });
 });
