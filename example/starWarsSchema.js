@@ -164,7 +164,8 @@ const shipType = relayQLNodableType({
   }),
   interfaces: [nodeInterface]
 });
-
+const shipEdge = relayEdgeMaker(shipType);
+const shipConnection = releyQLConnectionMaker(shipEdge);
 
 var factionType = relayQLNodableType({
   name: 'Faction',
@@ -188,15 +189,11 @@ var factionType = relayQLNodableType({
           pageInfo:pageInfo,
           edges:edges,
         };
-
       },
     }),
   }),
   interfaces: [nodeInterface]
 });
-
-const shipEdge = relayEdgeMaker(shipType);
-const shipConnection = releyQLConnectionMaker(shipEdge);
 
 const queryType = new GraphQLObjectType({
   name: 'Query',

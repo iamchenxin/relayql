@@ -156,27 +156,28 @@ function testRange(v: number, interval: '[]'|'()'|'[)'|'(]', minMax: number[])
  * decode ConnectionArgsJS to a ArrayRange ( a  stardard javascript Array Range
  * which start is including )
 **/
-function decodeConnectionArgs(_args:ConnectionArgsJS,
+function decodeConnectionArgs(__args:ConnectionArgsJS,
   maxLength:number): ArrayRange {
   // the default value for _args .
+  // after and before is a open interval '()'
   const _defaultArgs = {
     after: -1, // so its -1 here,to include index 0
     first: maxLength,
     before: maxLength, // so its maxLength here too
     last: maxLength,
   };
-  const args = setDefault(_args,_defaultArgs);
+  const args = setDefault(__args,_defaultArgs);
   invariant ( args.first >= 0 && args.last >= 0 ,
-    `first and last must >= 0, with ${formatArgs(_args)}`);
-  // after and before is a open interval '()',so convert to a closed interval '[]'
+    `first and last must >= 0, ${formatArgs(__args)}`);
+  // convert to a closed interval '[]'
   // because first and last is a closed interval
   const start = args.after + 1;
   const end = args.before - 1;
-  // start must in [0,maxLength-1] ,end must be in [start, maxLength-1]
+  // invariant 0 <= start <= end <= (maxLength - 1)
   invariant(
     testRange(start, '[]', [0, maxLength-1]) &&
     testRange(end, '[]', [start, maxLength-1])
-    , formatArgs(_args) );
+    , formatArgs(__args) );
   // number of element between after&before
   const count = end - start + 1;
   // if first or last > count, set them to count.
@@ -184,7 +185,7 @@ function decodeConnectionArgs(_args:ConnectionArgsJS,
   const last = (args.last > count)? count: args.last;
   const intersect = first + last - count;
   // if not intersect,means out of range too.
-  invariant( intersect > 0 , formatArgs(_args));
+  invariant( intersect > 0 , formatArgs(__args));
 
   return {
     start: start + (count - last) ,
@@ -193,6 +194,8 @@ function decodeConnectionArgs(_args:ConnectionArgsJS,
 }
 
 // for error output
+// not sure if needed using `cursorToOffset` here, it will make error msg more
+// useful but will expose server data.
 function formatArgs(args:ConnectionArgsJS) {
   let msg = 'Out of range: with Args(';
   msg += args.after?`after:${cursorToOffset(args.after)},`
