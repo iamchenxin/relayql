@@ -10,13 +10,16 @@ import {
   GraphQLObjectType,
   GraphQLList,
   GraphQLString,
-  GraphQLSchema
+  GraphQLSchema,
+  GraphQLEnumType
 } from 'flow-graphql';
 
 import type {
   GraphQLResolveInfo,
   GraphQLFieldConfig,
-  GraphQLIsTypeOfFn
+  GraphQLIsTypeOfFn,
+  GraphQLType,
+  GraphQLNullableType
 } from 'flow-graphql';
 
 import {
@@ -25,6 +28,7 @@ import {
   getRebels,
   getEmpire,
   createShip,
+  getShipByName
 } from './starWarsData.js';
 
 import type {
@@ -38,7 +42,10 @@ import {
   relayQLIdField,
   relayQLNodeMaker,
   relayQLNodableType,
-  relayQLNodeField
+  relayQLNodeField,
+  PluralIdentifyingRootField,
+  nonNullList,
+  nonNullListnonNull
 } from '../src/node/index.js';
 
 import {
@@ -214,9 +221,22 @@ const queryType = new GraphQLObjectType({
         default:
           return getShip(_resolvedId.id);
       }
+    }),
+    names: PluralIdentifyingRootField({
+      type: nonNullList(shipType), // Flow -> Array<?ShipDT>
+      args: { // args is a {names: string[]} in Flow
+        names:{
+          type: nonNullListnonNull(GraphQLString)
+        }
+      },
+      resolve: (_, args:{names: string[]}, cxt, info): Array<?ShipDT> => {
+        const names = args.names;
+        return names.map(name => getShipByName(name));
+      }
     })
   })
 });
+
 
 const introduceShip = mutationWithClientMutationId({
   name: 'IntroduceShip',

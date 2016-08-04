@@ -124,12 +124,22 @@ function getEmpire(): FactionDT {
   return empire;
 }
 
+function getShipByName(name: string): ?ShipDT {
+  for ( const key in data.Ship) {
+    if (data.Ship[key].name == name) {
+      return data.Ship[key];
+    }
+  }
+  return null;
+}
+
 export {
   createShip,
   getShip,
   getFaction,
   getRebels,
-  getEmpire
+  getEmpire,
+  getShipByName
 };
 
 export type {

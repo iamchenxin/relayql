@@ -86,8 +86,9 @@ type RelayQLNodableTypeConfig<TSource> = {
   isTypeOf?: ?GraphQLIsTypeOfFn;
   description?: ?string
 }
-function relayQLNodableType<TSource>(
-config: RelayQLNodableTypeConfig<TSource>) {
+
+export function relayQLNodableType<TSource>(
+config: RelayQLNodableTypeConfig<TSource>): GraphQLObjectType {
   return new GraphQLObjectType(config);
 }
 
@@ -136,6 +137,5 @@ export type {
 
 export {
   relayQLNodeMaker,
-  relayQLNodableType,
   relayQLNodeField,
 };

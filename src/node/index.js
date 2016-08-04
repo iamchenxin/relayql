@@ -26,6 +26,17 @@ import {
   relayQLNodeField,
 } from './node.js';
 
+import type{
+  PluralIdentifyingRootFieldResolveFn,
+  PluralIdentifyingRootFieldConfig
+} from './plural.js';
+
+import {
+  PluralIdentifyingRootField,
+  nonNullList,
+  nonNullListnonNull
+} from './plural.js';
+
 // -------- export -------------
 
 export type{
@@ -34,7 +45,9 @@ export type{
   RelayQLFieldConfigMap,
   RelayQLNodableTypeConfig,
   NodeTypeResolverFn,
-  GetDataByRGIDFn
+  GetDataByRGIDFn,
+  PluralIdentifyingRootFieldResolveFn,
+  PluralIdentifyingRootFieldConfig
 };
 
 export {
@@ -44,4 +57,7 @@ export {
   relayQLNodeMaker,
   relayQLNodableType,
   relayQLNodeField,
+  PluralIdentifyingRootField,
+  nonNullList,
+  nonNullListnonNull
 };

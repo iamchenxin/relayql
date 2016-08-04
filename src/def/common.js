@@ -6,6 +6,7 @@
 import {
   GraphQLInterfaceType,
   GraphQLNonNull,
+  GraphQLList,
   GraphQLID,
   GraphQLScalarType,
   GraphQLEnumType
@@ -14,7 +15,9 @@ import {
 import type {
   GraphQLFieldConfig,
   GraphQLObjectType,
-  GraphQLResolveInfo
+  GraphQLResolveInfo,
+  GraphQLType,
+  GraphQLNullableType
 } from 'flow-graphql';
 
 type NonNullRelayType = GraphQLNonNull<GraphQLScalarType<*>|GraphQLEnumType>;
@@ -32,6 +35,13 @@ type RelayField<TYPE> = {
   args?: {[key:string]:Object},
   resolve:ResolverFn<*, *>
 };
+
+function list<T: GraphQLType>(v: T):GraphQLList<T> {
+  return new GraphQLList(v);
+}
+function nonNull<T: GraphQLNullableType>(v: T):GraphQLNonNull<T> {
+  return new GraphQLNonNull(v);
+}
 
 /**
  * Used while defining GraphQL types to allow for circular references in
@@ -63,5 +73,7 @@ export type {
 };
 
 export {
-  resolveThunk
+  resolveThunk,
+  list,
+  nonNull
 };
