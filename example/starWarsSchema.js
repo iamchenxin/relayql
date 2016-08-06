@@ -200,13 +200,13 @@ const queryType = new GraphQLObjectType({
       type: factionType,
       resolve: () => getEmpire(),
     },
-    node: maker.nodeInterfaceField(nodeInterface, (_resolvedId) => {
-      switch (_resolvedId.type) {
+    node: maker.nodeInterfaceField(nodeInterface, (_nodeInfo) => {
+      switch (_nodeInfo.type) {
         case 'Faction':
-          return getFaction(_resolvedId.serverId);
+          return getFaction(_nodeInfo.serverId);
         case 'Ship':
         default:
-          return getShip(_resolvedId.serverId);
+          return getShip(_nodeInfo.serverId);
       }
     }),
     names: spec.pluralIdentifyingRootField({

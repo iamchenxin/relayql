@@ -40,4 +40,25 @@ query{
   }
 }
 
+mutation($in: IntroduceShipInput!){
+  introduceShip(input: $in){
+    ship{
+      id
+      name
+    },
+    faction{
+      id
+      name
+      ships{
+        edges{
+          node{
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+}
+
 */
