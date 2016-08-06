@@ -16,6 +16,11 @@ type NodeJS = { // the interface of NodeType
   id: string // should custom by Relay
 };
 
+type NodableJS = { // type extend from Node interface
+    id: string,
+    [key:string]:mixed
+};
+
 type ConnectionCursorJS = string // should custom by Relay
 type EdgeJS<NodeType: NodeJS> = {
   node: NodeType;
@@ -66,6 +71,7 @@ type ArrayRange = {
 
 export type {
   NodeJS,
+  NodableJS,
   ConnectionCursorJS,
   EdgeJS,
   PageInfoJS,

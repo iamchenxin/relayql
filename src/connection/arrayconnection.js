@@ -1,5 +1,6 @@
 /* @flow */
 /**
+ * utils for array like connections
  * Specification: https://facebook.github.io/relay/graphql/connections.htm
  */
 
@@ -75,26 +76,6 @@ type ArrayConnectionFieldConfig<TSource> = {
   deprecationReason?: ?string;
   description?: ?string;
 }
-/*
-function fromArray<NodeType>(
-  data: Array<NodeType>,
-  args: ConnectionArgsJS,
-  slice?: ArrayRange
-):Connection<NodeType> {
-  let arrayRange = {
-    start: 0,
-    length: data.length
-  };
-  if (slice) {
-    arrayRange = clipRange(arrayRange, slice);
-  }
-
-  const {first, last} = args;
-  const before = getOffsetWithDefault(args.before, meta.arrayLength);
-  const after = getOffsetWithDefault(args.after, -1);
-
-}
-*/
 
 // Helper functions
 
@@ -112,22 +93,6 @@ function offsetToCursor(offset: number): ConnectionCursorJS {
  */
 function cursorToOffset(cursor: ConnectionCursorJS): number {
   return parseInt(unbase64(cursor).substring(PREFIX.length), 10);
-}
-
-/**
- * Given an optional cursor and a default offset, returns the offset
- * to use; if the cursor contains a valid offset, that will be used,
- * otherwise it will be the default.
- */
-export function getOffsetWithDefault(
-  cursor?: ?ConnectionCursorJS,
-  defaultOffset: number
-): number {
-  if (typeof cursor !== 'string') {
-    return defaultOffset;
-  }
-  var offset = cursorToOffset(cursor);
-  return isNaN(offset) ? defaultOffset : offset;
 }
 
 function clip(v: ?number, range: Range, _default: number): number {
@@ -222,29 +187,6 @@ function setDefault(_args:ConnectionArgsJS, _defaultArgs:NumberedArgs)
     last: _args.last? _args.last: _defaultArgs.last
   };
 }
-/*
-function arrayRelayEdgeMaker<TSource>(name:string,
-node: GraphQLFieldConfig<TSource>): GraphQLObjectType {
-
-
-  return new GraphQLObjectType({
-    name: name + 'Edge',
-    description: 'An edge in a connection.',
-    fields: () => ({
-      node:{
-        type: GraphQLInterfaceType,
-        resolve: GraphQLFieldResolveFn<TSource, *>,
-    //    description?: string //for flow check,do not need input
-      },
-      cursor: {
-        resolve: GraphQLFieldResolveFn<TSource, *>,
-    //    type?:  GraphQLNonNull<GraphQLScalarType>, //FLOW-ARGS:do not need input
-    //    description?: string //FLOW-ARGS:do not need input
-      },
-    }),
-  });
-}
-*/
 
 function edgesFromArray<T: NodeJS>(data: Array<T>, range: ArrayRange)
 : EdgeJS<T>[] {
@@ -274,27 +216,8 @@ function pageInfoFromArray(edges: EdgeJS<*>[],
   }
 }
 
-function arrayConnectionField<TSource>(
-  config: ArrayConnectionFieldConfig<TSource>): GraphQLFieldConfig<TSource> {
-
-  const checkedFn = check(
-    (src:TSource ):TSource => src,
-    args => decodeConnectionArgs(args,65660),
-    null,
-    config.resolve
-  );
-  return {
-    type: config.type,
-    args: config.args,
-    resolve: checkedFn,
-    deprecationReason: config.deprecationReason,
-    description: config.description,
-  };
-}
-
 export {
   pageInfoFromArray,
-  arrayConnectionField,
   edgesFromArray,
   decodeConnectionArgs,
   cursorToOffset,

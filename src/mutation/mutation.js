@@ -104,8 +104,12 @@ function mutationWithClientMutationId<TSource>(
   };
 }
 
+const maker = {
+  mutation:mutationWithClientMutationId
+};
+
 export {
-  mutationWithClientMutationId
+  maker
 };
 
 export type {

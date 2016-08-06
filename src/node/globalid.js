@@ -28,16 +28,17 @@ import type {
 } from 'flow-graphql';
 
 import {
-  pro
+  pro,
+  dev
 } from 'flow-dynamic';
 const {sourceCheck, isString} = pro;
 
 import {RelayQLError, eFormat} from '../utils/error.js';
 
 
-type ResolvedGID = {
+type NodeInfo = {
   type: string,
-  id: string
+  serverId: string
 };
 
 /**
@@ -52,12 +53,12 @@ function encodeId(type: string, id: string): string {
  * Takes the "global ID" created by encodeId, and returns the type name and ID
  * used to create it.
  */
-function decodeId(globalId: string): ResolvedGID {
+function decodeId(globalId: string): NodeInfo {
   var unbasedGlobalId = unbase64(globalId);
   var delimiterPos = unbasedGlobalId.indexOf(':');
   return {
     type: unbasedGlobalId.substring(0, delimiterPos),
-    id: unbasedGlobalId.substring(delimiterPos + 1)
+    serverId: unbasedGlobalId.substring(delimiterPos + 1)
   };
 }
 
@@ -73,7 +74,7 @@ type GIDEncodeFn = (source:{id:string}, args:{[argName: string]: mixed},
  * by calling idFetcher on the object, or if not provided, by accessing the `id`
  * property on the object.
  */
-function relayQLIdField(
+function idFieldMaker(
   typenameOrResolver?: string|GIDEncodeFn
 ):GraphQLFieldConfig< * > {
   let defaultResolver:GIDEncodeFn;
@@ -103,7 +104,7 @@ function relayQLIdField(
   name: 'id',
   description: 'The ID of an object',
   type: new GraphQLNonNull(GraphQLID),
-  resolve: sourceCheck(
+  resolve: dev.sourceCheck(
     src => ({ id: isString(src.id) }),
     defaultResolver
   )
@@ -111,12 +112,16 @@ function relayQLIdField(
 }
 
 export type {
-  ResolvedGID,
+  NodeInfo,
   GIDEncodeFn
+};
+
+const maker = {
+  idField:idFieldMaker
 };
 
 export {
   encodeId,
   decodeId,
-  relayQLIdField
+  maker
 };

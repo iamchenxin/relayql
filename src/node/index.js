@@ -2,62 +2,69 @@
  *
 **/
 
-import type {
-  ResolvedGID,
-  GIDEncodeFn
-} from './globalid.js';
-
 import {
   encodeId,
   decodeId,
-  relayQLIdField
+  maker as id_maker
 } from './globalid.js';
 
-import type {
-  RelayQLFieldConfigMap,
-  RelayQLNodableTypeConfig,
-  NodeTypeResolverFn,
-  GetDataByRGIDFn
+import {
+  maker as node_maker,
+  spec as node_spec
 } from './node.js';
 
 import {
-  relayQLNodeMaker,
-  relayQLNodableType,
-  relayQLNodeField,
-} from './node.js';
-
-import type{
-  PluralIdentifyingRootFieldResolveFn,
-  PluralIdentifyingRootFieldConfig
-} from './plural.js';
-
-import {
-  PluralIdentifyingRootField,
+  maker as plu_maker,
+  spec as plu_spec,
   nonNullList,
   nonNullListnonNull
 } from './plural.js';
 
-// -------- export -------------
-
-export type{
-  ResolvedGID,
-  GIDEncodeFn,
-  RelayQLFieldConfigMap,
-  RelayQLNodableTypeConfig,
-  NodeTypeResolverFn,
-  GetDataByRGIDFn,
-  PluralIdentifyingRootFieldResolveFn,
-  PluralIdentifyingRootFieldConfig
+const maker = {
+  ...id_maker,
+  ...node_maker,
+  ...plu_maker
+};
+const spec = {
+  ...node_spec,
+  ...plu_spec
 };
 
 export {
   encodeId,
   decodeId,
-  relayQLIdField,
-  relayQLNodeMaker,
-  relayQLNodableType,
-  relayQLNodeField,
-  PluralIdentifyingRootField,
   nonNullList,
-  nonNullListnonNull
+  nonNullListnonNull,
+  maker,
+  spec,
+};
+
+// -------- export type-------------
+
+import type {
+  NodeInfo,
+  GIDEncodeFn,
+} from './globalid.js';
+
+import type {
+  NodableFieldConfigMap,
+  NodableTypeConfig,
+  NodeTypeResolverFn,
+  GetDataByNodeInfoFn,
+} from './node.js';
+
+import type{
+  PluralIdentifyingRootFieldResolveFn,
+  PluralIdentifyingRootFieldConfig,
+} from './plural.js';
+
+export type{
+  NodeInfo,
+  GIDEncodeFn,
+  NodableFieldConfigMap,
+  NodableTypeConfig,
+  NodeTypeResolverFn,
+  GetDataByNodeInfoFn,
+  PluralIdentifyingRootFieldResolveFn,
+  PluralIdentifyingRootFieldConfig,
 };

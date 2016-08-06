@@ -2,31 +2,59 @@
  *
 **/
 
-export {
-  relayEdgeMaker,
-  releyQLConnectionMaker,
-  relayQLConnectionField,
+import {
   pageInfoFromArray,
-  arrayConnectionField,
   edgesFromArray,
-  decodeConnectionArgs
+  decodeConnectionArgs,
+  maker as connection_maker,
+  spec as connection_spec
 } from './connection/index.js';
 
-export {
+import {
   encodeId,
   decodeId,
-  relayQLIdField,
-  relayQLNodeMaker,
-  relayQLNodableType,
-  relayQLNodeField,
+  nonNullList,
+  nonNullListnonNull,
+  maker as node_maker,
+  spec as node_spec
 } from './node/index.js';
 
-export {
-  mutationWithClientMutationId
+import {
+  maker as mutation_maker
 } from './mutation/mutation.js';
 
+import {
+  resolveThunk
+} from './def/common.js';
+
+const maker = {
+  ...connection_maker,
+  ...node_maker,
+  ...mutation_maker
+};
+
+const spec = {
+  ...connection_spec,
+  ...node_spec
+};
+
+export {
+  pageInfoFromArray,
+  edgesFromArray,
+  decodeConnectionArgs,
+  encodeId,
+  decodeId,
+  nonNullList,
+  nonNullListnonNull,
+  resolveThunk,
+  maker,
+  spec
+};
+
+// export type ---------
 export type {
   NodeJS,
+  NodableJS,
   ConnectionCursorJS,
   EdgeJS,
   PageInfoJS,
@@ -44,8 +72,4 @@ export type {
   CusTomType,
   NonNullRelayType,
   GraphQLResolveInfo
-} from './def/common.js';
-
-export {
-  resolveThunk
 } from './def/common.js';

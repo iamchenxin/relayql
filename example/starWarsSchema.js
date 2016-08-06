@@ -39,24 +39,15 @@ import type {
 import {
   encodeId,
   decodeId,
-  relayQLIdField,
-  relayQLNodeMaker,
-  relayQLNodableType,
-  relayQLNodeField,
-  PluralIdentifyingRootField,
   nonNullList,
-  nonNullListnonNull
-} from '../src/node/index.js';
-
-import {
-  relayEdgeMaker,
-  releyQLConnectionMaker,
-  relayQLConnectionField,
+  nonNullListnonNull,
   pageInfoFromArray,
-  arrayConnectionField,
   edgesFromArray,
-  decodeConnectionArgs
-} from '../src/connection/index.js';
+  decodeConnectionArgs,
+  maker,
+  spec,
+} from '../src/index.js';
+
 
 import type {
   NodeJS,
@@ -65,12 +56,7 @@ import type {
   PageInfoJS,
   ConnectionJS,
   ConnectionArgsJS,
-} from '../src/def/datastructure.js';
-
-import {
-  mutationWithClientMutationId
-} from '../src/mutation/mutation.js';
-
+} from '../src/index.js';
 
 
 /**
@@ -148,8 +134,8 @@ import {
  * }
  */
 
-const nodeInterface = relayQLNodeMaker( ({_resolvedId}) => {
-  switch (_resolvedId.type) {
+const nodeInterface = maker.nodeInterface( ({_nodeInfo}) => {
+  switch (_nodeInfo.type) {
     case 'Faction':
     return factionType;
     case 'Ship':
@@ -159,11 +145,11 @@ const nodeInterface = relayQLNodeMaker( ({_resolvedId}) => {
   }
 } );
 
-const shipType = relayQLNodableType({
+const shipType = spec.nodableType({
   name: 'Ship',
   description: 'A ship in the Star Wars saga',
   fields: () => ({
-    id: relayQLIdField(),
+    id: maker.idField(),
     name: {
      type: GraphQLString,
      description: 'The name of the ship.',
@@ -171,19 +157,20 @@ const shipType = relayQLNodableType({
   }),
   interfaces: [nodeInterface]
 });
-const shipEdge = relayEdgeMaker(shipType);
-const shipConnection = releyQLConnectionMaker(shipEdge);
 
-var factionType = relayQLNodableType({
+const shipEdge = maker.edge(shipType);
+const shipConnection = maker.connection(shipEdge);
+
+var factionType = spec.nodableType({
   name: 'Faction',
   description: 'A faction in the Star Wars saga',
   fields: () => ({
-    id: relayQLIdField(),
+    id: maker.idField(),
     name: {
       type: GraphQLString,
       description: 'The name of the faction.',
     },
-    ships: relayQLConnectionField({
+    ships: spec.connectionField({
       type: shipConnection,
       description: 'The ships used by the faction.',
       args: 'all',
@@ -213,16 +200,16 @@ const queryType = new GraphQLObjectType({
       type: factionType,
       resolve: () => getEmpire(),
     },
-    node: relayQLNodeField(nodeInterface, (_resolvedId) => {
+    node: maker.nodeInterfaceField(nodeInterface, (_resolvedId) => {
       switch (_resolvedId.type) {
         case 'Faction':
-          return getFaction(_resolvedId.id);
+          return getFaction(_resolvedId.serverId);
         case 'Ship':
         default:
-          return getShip(_resolvedId.id);
+          return getShip(_resolvedId.serverId);
       }
     }),
-    names: PluralIdentifyingRootField({
+    names: spec.pluralIdentifyingRootField({
       type: nonNullList(shipType), // Flow -> Array<?ShipDT>
       args: { // args is a {names: string[]} in Flow
         names:{
@@ -237,8 +224,7 @@ const queryType = new GraphQLObjectType({
   })
 });
 
-
-const introduceShip = mutationWithClientMutationId({
+const introduceShip = maker.mutation({
   name: 'IntroduceShip',
   inputFields: {
     shipName: {

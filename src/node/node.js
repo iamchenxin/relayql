@@ -28,7 +28,11 @@ import type {
 } from '../def/common.js';
 
 import type {
-  ResolvedGID
+  NodableJS
+} from '../def/datastructure.js';
+
+import type {
+  NodeInfo
 } from './globalid.js';
 
 import {
@@ -36,7 +40,8 @@ import {
 } from './globalid.js';
 
 import {
-  pro
+  pro,
+  dev
 } from 'flow-dynamic';
 const {
   argsCheck,
@@ -46,11 +51,11 @@ const {
 
 import {RelayQLError, eFormat} from '../utils/error.js';
 
-type NodeTypeResolverFn = (source: {_resolvedId: ResolvedGID})
+type NodeTypeResolverFn = (source: {_nodeInfo: NodeInfo})
   => ?GraphQLObjectType;
 // Make a Relay's Node Interface
 // A interface is used to dynamic resolve to a certain Type,like other language
-function relayQLNodeMaker(typeResolver:NodeTypeResolverFn)
+function nodeInterfaceMaker(typeResolver:NodeTypeResolverFn)
 :GraphQLInterfaceType {
   const rt = new GraphQLInterfaceType({
     name: 'Node',
@@ -61,48 +66,44 @@ function relayQLNodeMaker(typeResolver:NodeTypeResolverFn)
         description: 'The id of the object.',
       },
     }),
-    resolveType: check1(
+    resolveType: dev.check1(
       source => ({
-        _resolvedId: { // user should not use _resolvedId as a key,its a reserved name
-          id: isString(source.id),
+        _nodeInfo: { // user should not use _nodeInfo as a key,its a reserved name
+          serverId: isString(source.serverId),
           type: isString(source.type)
         }
       }),
       typeResolver)
   });
-  //console.log(ePrint(GraphQLInterfaceType.mock));
   return rt;
 }
 
 
-type RelayQLFieldConfigMap<TSource> = {
+type NodableFieldConfigMap<TSource> = {
   id:GraphQLFieldConfig<TSource>,
   [fieldName: string]: GraphQLFieldConfig<TSource>;
 };
-type RelayQLNodableTypeConfig<TSource> = {
+type NodableTypeConfig<TSource> = {
   name: string,
   interfaces: Thunk<?Array<GraphQLInterfaceType>>;
-  fields: Thunk<RelayQLFieldConfigMap<TSource>>;
+  fields: Thunk<NodableFieldConfigMap<TSource>>;
   isTypeOf?: ?GraphQLIsTypeOfFn;
   description?: ?string
 }
 
-export function relayQLNodableType<TSource>(
-config: RelayQLNodableTypeConfig<TSource>): GraphQLObjectType {
+function nodableType<TSource>(
+config: NodableTypeConfig<TSource>): GraphQLObjectType {
   return new GraphQLObjectType(config);
 }
 
-type GetDataByRGIDFn = (resolvedId:ResolvedGID, context: mixed,
-  info: GraphQLResolveInfo) => {
-    id: string,
-    [key:string]:mixed
-  } ;
+type GetDataByNodeInfoFn<NodableData> = (_nodeInfo:NodeInfo, context: mixed,
+  info: GraphQLResolveInfo) => NodableData;
 
 // Make a field,which used Node,as a interface to get any type extend from Node.
-// accept a args(id: string) id is globalid , resolve a ResolvedGID to downsteam
+// accept a args(id: string) id is globalid , resolve a NodeInfo to downsteam
 // it is most used as a top-level source.
-function relayQLNodeField(nodeItf:GraphQLInterfaceType,
-resolver:GetDataByRGIDFn, idDecoder?: (gid:string) => ResolvedGID)
+function nodeInterfaceField<NodableData>(nodeItf:GraphQLInterfaceType,
+resolver:GetDataByNodeInfoFn<NodableData>, idDecoder?: (gid:string) => NodeInfo)
 :GraphQLFieldConfig<*> {
   return {
     name: 'node',
@@ -118,24 +119,32 @@ resolver:GetDataByRGIDFn, idDecoder?: (gid:string) => ResolvedGID)
       args => ({id: isString(args.id) }),
       (obj, {id}, context, info) =>
         {
-          const _resolvedId = idDecoder?idDecoder(id):decodeId(id);
-          let data = resolver(_resolvedId, context, info);
-          data._resolvedId = _resolvedId;
+          const _nodeInfo = idDecoder?idDecoder(id):decodeId(id);
+          let data:any = resolver(_nodeInfo, context, info);
+          data._nodeInfo = _nodeInfo;
           return data;
         }
     )
   };
 }
 
+const maker = {
+  nodeInterface:nodeInterfaceMaker,
+  nodeInterfaceField:nodeInterfaceField
+}
+
+const spec = {
+  nodableType:nodableType
+};
 
 export type {
-  RelayQLFieldConfigMap,
-  RelayQLNodableTypeConfig,
+  NodableFieldConfigMap,
+  NodableTypeConfig,
   NodeTypeResolverFn,
-  GetDataByRGIDFn
+  GetDataByNodeInfoFn
 };
 
 export {
-  relayQLNodeMaker,
-  relayQLNodeField,
+  maker,
+  spec
 };

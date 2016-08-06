@@ -159,7 +159,7 @@ type ConnectionFieldConfig<TSource> = {
   deprecationReason?: ?string;
   description?: ?string;
 };
-function relayQLConnectionField<TSource>(config: ConnectionFieldConfig<TSource>)
+function relayQLConnectionFieldSpec<TSource>(config: ConnectionFieldConfig<TSource>)
 :GraphQLFieldConfig<TSource> {
   let args: GraphQLFieldConfigArgumentMap = connectionArgs;
   if (config.args == 'forward') {
@@ -189,7 +189,7 @@ function relayQLConnectionField<TSource>(config: ConnectionFieldConfig<TSource>)
 
 export {
   releyQLConnectionMaker,
-  relayQLConnectionField,
+  relayQLConnectionFieldSpec,
   forwardConnectionArgs,
   backwardConnectionArgs,
   connectionArgs

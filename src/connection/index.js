@@ -9,24 +9,29 @@ import {
 
 import {
   releyQLConnectionMaker,
-  relayQLConnectionField
+  relayQLConnectionFieldSpec,
 } from './connection.js';
 
 import {
   pageInfoFromArray,
-  arrayConnectionField,
   edgesFromArray,
   decodeConnectionArgs
 } from './arrayconnection.js';
 
 // -------------- export
+const maker = {
+  connection:releyQLConnectionMaker,
+  edge:relayEdgeMaker
+};
+
+const spec = {
+  connectionField:relayQLConnectionFieldSpec
+};
 
 export {
-  relayEdgeMaker,
-  releyQLConnectionMaker,
-  relayQLConnectionField,
   pageInfoFromArray,
-  arrayConnectionField,
   edgesFromArray,
-  decodeConnectionArgs
+  decodeConnectionArgs,
+  maker,
+  spec,
 } ;

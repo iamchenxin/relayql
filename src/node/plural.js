@@ -141,8 +141,16 @@ export type{
   PluralIdentifyingRootFieldConfig,
 };
 
+const maker = {
+  pluralIdentifyingRootField:pluralIdentifyingRootFieldMaker
+};
+const spec = {
+  pluralIdentifyingRootField:PluralIdentifyingRootField
+};
+
 export {
-  PluralIdentifyingRootField,
   nonNullList,
-  nonNullListnonNull
+  nonNullListnonNull,
+  maker,
+  spec
 };

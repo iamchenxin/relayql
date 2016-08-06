@@ -33,27 +33,6 @@ import {
   resolveThunk
 } from '../def/common.js';
 
-/*
-type RelayEdgeFields<TSource> = {
-  node:{
-    type: GraphQLInterfaceType,
-    resolve: GraphQLFieldResolveFn<TSource, *>,
-    description: string
-  },
-  cursor: {
-    type:  GraphQLNonNull<GraphQLScalarType>,
-    resolve: GraphQLFieldResolveFn<TSource, *>,
-    description: string
-  },
-  [key:string]:GraphQLFieldConfig<TSource>
-};
-
-type RelayQLEdgeType<TSource> = {
-  name: string,
-  description: string,
-  fields: () => RelayEdgeFields<TSource>
-};
-*/
 type RelayEdgeMakerConfig<TSource> = {
   node:{
     type: GraphQLInterfaceType,
@@ -68,29 +47,15 @@ type RelayEdgeMakerConfig<TSource> = {
   [key:string]:GraphQLFieldConfig<TSource>
 };
 
-
-/* Flow allow hand-write sub -> all, but not allow
-function ts(resolverFn: GraphQLFieldResolveFn<*, *>,
-  type: GraphQLInterfaceType): GraphQLFieldConfigMap<*> {
-  const a:GraphQLFieldConfigMap<*> = {
-    node:{
-      type: type,
-      resolve: resolverFn,
-  //    description?: string //for flow check,do not need input
-    },
-  };
-  return a;
-}
-*/
-
 /*
- * edge is a BlackBox, it is used by relay,and should not used by user.
+ * this design assume edge is a BlackBox, so should not customise by user.
  * there is no customise requirement for it.
  * so it have no resolver for its fields,
 
  * but default, the name is nodeType.name + 'Edge'
 **/
 function relayEdgeMaker(nodeType: GraphQLObjectType, _name?:string) {
+
   const name = _name? _name: nodeType.name;
   return new GraphQLObjectType({
     name: name + 'Edge',
@@ -107,7 +72,6 @@ function relayEdgeMaker(nodeType: GraphQLObjectType, _name?:string) {
     }),
   });
 }
-
 
 export {
   relayEdgeMaker
