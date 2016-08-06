@@ -25,6 +25,11 @@ import {
   nonNull
 } from '../def/common.js';
 
+import {
+  eFormat,
+  invariant
+} from '../utils/error.js';
+
 type NonNullListNonNull<T> =
   GraphQLNonNull< GraphQLList< GraphQLNonNull<T> > >;
 type PluralArgType =
@@ -88,6 +93,47 @@ function nonNullList( v:GraphQLObjectType )
 function nonNullListnonNull<T: GraphQLScalarType|GraphQLEnumType|
 GraphQLInputObjectType>( v:T ): NonNullListNonNull<T> {
   return nonNull(list(nonNull(v)));
+}
+
+// maker
+type PluralFieldMakerResolveFn<SingleArgs, SingleResult> =
+  (args: SingleArgs, cxt: mixed, info: GraphQLResolveInfo) => SingleResult;
+
+type PluralFieldMakerConfig<SingleArgs, SingleResult> = {
+  type: GraphQLObjectType,
+  description?: ?string,
+  args: {
+    [argName: string]: {
+      type: GraphQLScalarType|GraphQLEnumType|GraphQLInputType
+    },
+  },
+  resolveSingle:PluralFieldMakerResolveFn<SingleArgs, SingleResult>,
+};
+
+function pluralIdentifyingRootFieldMaker<SingleArgs, SingleResult> (
+config: PluralFieldMakerConfig<SingleArgs, SingleResult> )
+: GraphQLFieldConfig<mixed> {
+
+  const keys = Object.keys(config.args);
+  if ( keys.length != 1 && config.args[keys[0]] == null ) {
+    invariant(false,'pluralIdentifyingRootField only accept one nonNull ' +
+    `args, See your args: ${eFormat(config.args)}`);
+  }
+  const argName = keys[0];
+
+  return {
+    description: config.description,
+    type: (nonNullList(config.type):any),
+    args: (config.args:any),
+    resolve: (source, args, cxt, info) => {
+      const inputs:any = args[argName];
+      return Promise.all(inputs.map(
+        input => Promise.resolve(
+          config.resolveSingle(input, cxt, info)
+        )
+      ));
+    }
+  }
 }
 
 export type{
