@@ -37,15 +37,20 @@ import type {
 } from './starWarsData.js';
 
 import {
-  encodeId,
-  decodeId,
-  nonNullList,
-  nonNullListnonNull,
   pageInfoFromArray,
   edgesFromArray,
   decodeConnectionArgs,
-  maker,
-  spec,
+  edge,
+  connection,
+  connectionField,
+  idField,
+  nodeInterface,
+  nodeInterfaceField,
+  nodableType,
+  nonNullList,
+  nonNullListnonNull,
+  pluralIdentifyingRootField,
+  mutation,
 } from '../src/index.js';
 
 
@@ -134,7 +139,7 @@ import type {
  * }
  */
 
-const nodeInterface = maker.nodeInterface( ({_nodeInfo}) => {
+const nodeItf = nodeInterface.maker( ({_nodeInfo}) => {
   switch (_nodeInfo.type) {
     case 'Faction':
     return factionType;
@@ -145,32 +150,32 @@ const nodeInterface = maker.nodeInterface( ({_nodeInfo}) => {
   }
 } );
 
-const shipType = spec.nodableType({
+const shipType = nodableType.spec({
   name: 'Ship',
   description: 'A ship in the Star Wars saga',
   fields: () => ({
-    id: maker.idField(),
+    id: idField.maker(),
     name: {
      type: GraphQLString,
      description: 'The name of the ship.',
     },
   }),
-  interfaces: [nodeInterface]
+  interfaces: [nodeItf]
 });
 
-const shipEdge = maker.edge(shipType);
-const shipConnection = maker.connection(shipEdge);
+const shipEdge = edge.maker(shipType);
+const shipConnection = connection.maker(shipEdge);
 
-var factionType = spec.nodableType({
+var factionType = nodableType.spec({
   name: 'Faction',
   description: 'A faction in the Star Wars saga',
   fields: () => ({
-    id: maker.idField(),
+    id: idField.maker(),
     name: {
       type: GraphQLString,
       description: 'The name of the faction.',
     },
-    ships: spec.connectionField({
+    ships: connectionField.spec({
       type: shipConnection,
       description: 'The ships used by the faction.',
       args: 'all',
@@ -186,7 +191,7 @@ var factionType = spec.nodableType({
       },
     }),
   }),
-  interfaces: [nodeInterface]
+  interfaces: [nodeItf]
 });
 
 const queryType = new GraphQLObjectType({
@@ -200,7 +205,7 @@ const queryType = new GraphQLObjectType({
       type: factionType,
       resolve: () => getEmpire(),
     },
-    node: maker.nodeInterfaceField(nodeInterface, (_nodeInfo) => {
+    node: nodeInterfaceField.maker(nodeItf, (_nodeInfo) => {
       switch (_nodeInfo.type) {
         case 'Faction':
           return getFaction(_nodeInfo.serverId);
@@ -209,7 +214,7 @@ const queryType = new GraphQLObjectType({
           return getShip(_nodeInfo.serverId);
       }
     }),
-    names: spec.pluralIdentifyingRootField({
+    names: pluralIdentifyingRootField.spec({
       type: nonNullList(shipType), // Flow -> Array<?ShipDT>
       args: { // args is a {names: string[]} in Flow
         names:{
@@ -224,7 +229,7 @@ const queryType = new GraphQLObjectType({
   })
 });
 
-const introduceShip = maker.mutation({
+const introduceShip = mutation.maker({
   name: 'IntroduceShip',
   inputFields: {
     shipName: {

@@ -104,14 +104,16 @@ function mutationWithClientMutationId<TSource>(
   };
 }
 
-const maker = {
-  mutation:mutationWithClientMutationId
+// export
+const mutation = {
+  maker:mutationWithClientMutationId
 };
 
 export {
-  maker
+  mutation,
 };
 
+// export type
 export type {
   MutationConfig,
   mutationFn

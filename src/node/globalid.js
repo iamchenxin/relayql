@@ -111,17 +111,19 @@ function idFieldMaker(
 };
 }
 
-export type {
-  NodeInfo,
-  GIDEncodeFn
-};
-
-const maker = {
-  idField:idFieldMaker
+// export
+const idField = {
+  maker:idFieldMaker
 };
 
 export {
   encodeId,
   decodeId,
-  maker
+  idField,
+};
+
+// export type
+export type {
+  NodeInfo,
+  GIDEncodeFn
 };

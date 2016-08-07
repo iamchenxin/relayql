@@ -78,31 +78,14 @@ function nodeInterfaceMaker(typeResolver:NodeTypeResolverFn)
   return rt;
 }
 
-
-type NodableFieldConfigMap<TSource> = {
-  id:GraphQLFieldConfig<TSource>,
-  [fieldName: string]: GraphQLFieldConfig<TSource>;
-};
-type NodableTypeConfig<TSource> = {
-  name: string,
-  interfaces: Thunk<?Array<GraphQLInterfaceType>>;
-  fields: Thunk<NodableFieldConfigMap<TSource>>;
-  isTypeOf?: ?GraphQLIsTypeOfFn;
-  description?: ?string
-}
-
-function nodableType<TSource>(
-config: NodableTypeConfig<TSource>): GraphQLObjectType {
-  return new GraphQLObjectType(config);
-}
-
+// nodeInterfaceField
 type GetDataByNodeInfoFn<NodableData> = (_nodeInfo:NodeInfo, context: mixed,
   info: GraphQLResolveInfo) => NodableData;
 
 // Make a field,which used Node,as a interface to get any type extend from Node.
 // accept a args(id: string) id is globalid , resolve a NodeInfo to downsteam
 // it is most used as a top-level source.
-function nodeInterfaceField<NodableData>(nodeItf:GraphQLInterfaceType,
+function nodeInterfaceFieldMaker<NodableData>(nodeItf:GraphQLInterfaceType,
 resolver:GetDataByNodeInfoFn<NodableData>, idDecoder?: (gid:string) => NodeInfo)
 :GraphQLFieldConfig<*> {
   return {
@@ -128,23 +111,45 @@ resolver:GetDataByNodeInfoFn<NodableData>, idDecoder?: (gid:string) => NodeInfo)
   };
 }
 
-const maker = {
-  nodeInterface:nodeInterfaceMaker,
-  nodeInterfaceField:nodeInterfaceField
+// nodableType
+type NodableFieldConfigMap<TSource> = {
+  id:GraphQLFieldConfig<TSource>,
+  [fieldName: string]: GraphQLFieldConfig<TSource>;
+};
+type NodableTypeConfig<TSource> = {
+  name: string,
+  interfaces: Thunk<?Array<GraphQLInterfaceType>>;
+  fields: Thunk<NodableFieldConfigMap<TSource>>;
+  isTypeOf?: ?GraphQLIsTypeOfFn;
+  description?: ?string
 }
 
-const spec = {
-  nodableType:nodableType
+function nodableTypeSpec<TSource>(
+config: NodableTypeConfig<TSource>): GraphQLObjectType {
+  return new GraphQLObjectType(config);
+}
+
+// export
+const nodeInterface = {
+  maker:nodeInterfaceMaker
+};
+const nodeInterfaceField = {
+  maker:nodeInterfaceFieldMaker
+};
+const nodableType = {
+  spec:nodableTypeSpec
 };
 
+export {
+  nodeInterface,
+  nodeInterfaceField,
+  nodableType
+};
+
+// export type
 export type {
   NodableFieldConfigMap,
   NodableTypeConfig,
   NodeTypeResolverFn,
   GetDataByNodeInfoFn
-};
-
-export {
-  maker,
-  spec
 };

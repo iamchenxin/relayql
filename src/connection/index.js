@@ -19,19 +19,21 @@ import {
 } from './arrayconnection.js';
 
 // -------------- export
-const maker = {
-  connection:releyQLConnectionMaker,
-  edge:relayEdgeMaker
+const edge = {
+  maker: relayEdgeMaker
 };
-
-const spec = {
-  connectionField:relayQLConnectionFieldSpec
+const connection = {
+  maker: releyQLConnectionMaker
+};
+const connectionField = {
+  spec: relayQLConnectionFieldSpec
 };
 
 export {
   pageInfoFromArray,
   edgesFromArray,
   decodeConnectionArgs,
-  maker,
-  spec,
+  edge,
+  connection,
+  connectionField,
 } ;

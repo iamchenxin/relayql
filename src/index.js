@@ -6,49 +6,49 @@ import {
   pageInfoFromArray,
   edgesFromArray,
   decodeConnectionArgs,
-  maker as connection_maker,
-  spec as connection_spec
+  edge,
+  connection,
+  connectionField,
 } from './connection/index.js';
 
 import {
   encodeId,
   decodeId,
+  idField,
+  nodeInterface,
+  nodeInterfaceField,
+  nodableType,
   nonNullList,
   nonNullListnonNull,
-  maker as node_maker,
-  spec as node_spec
+  pluralIdentifyingRootField,
 } from './node/index.js';
 
 import {
-  maker as mutation_maker
+  mutation,
 } from './mutation/mutation.js';
 
 import {
   resolveThunk
 } from './def/common.js';
 
-const maker = {
-  ...connection_maker,
-  ...node_maker,
-  ...mutation_maker
-};
-
-const spec = {
-  ...connection_spec,
-  ...node_spec
-};
-
 export {
   pageInfoFromArray,
   edgesFromArray,
   decodeConnectionArgs,
+  edge,
+  connection,
+  connectionField,
   encodeId,
   decodeId,
+  idField,
+  nodeInterface,
+  nodeInterfaceField,
+  nodableType,
   nonNullList,
   nonNullListnonNull,
+  pluralIdentifyingRootField,
+  mutation,
   resolveThunk,
-  maker,
-  spec
 };
 
 // export type ---------

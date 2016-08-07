@@ -66,7 +66,7 @@ type PluralIdentifyingRootFieldConfig<SingleArgs, SingleResult> = {
   resolve:PluralIdentifyingRootFieldResolveFn<SingleArgs, SingleResult>
 };
 
-function PluralIdentifyingRootField<SingleArgs, SingleResult> (
+function pluralIdentifyingRootFieldSpec<SingleArgs, SingleResult> (
 config: PluralIdentifyingRootFieldConfig<SingleArgs, SingleResult>
 ):GraphQLFieldConfig<mixed>  {
   // TODO: Cause of lack of correct recursively type expression,
@@ -141,16 +141,13 @@ export type{
   PluralIdentifyingRootFieldConfig,
 };
 
-const maker = {
-  pluralIdentifyingRootField:pluralIdentifyingRootFieldMaker
-};
-const spec = {
-  pluralIdentifyingRootField:PluralIdentifyingRootField
+const pluralIdentifyingRootField = {
+  spec:pluralIdentifyingRootFieldSpec,
+  maker:pluralIdentifyingRootFieldMaker
 };
 
 export {
   nonNullList,
   nonNullListnonNull,
-  maker,
-  spec
+  pluralIdentifyingRootField,
 };
