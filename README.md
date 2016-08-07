@@ -1,18 +1,11 @@
-|   Functions   |Spec | maker |
-|---------------|-----|-------|
+|   Functions   |Spec | maker | utils|
+|---------------|----:|------:|------:|
 |nodeInterface  |    |   ✔    |
 |nodeInterfaceField|   | ✔ |
 |nodableType    |✔  | |
-|idField | | ✔|
-|encodeId|
-|decodeId|
-|pluralIdentifyingRootField |✔ |✔ |
-|nonNullList|
-|nonNullListnonNull|
+|idField        |     |      ✔|encodeId <br/> decodeId|
+|pluralIdentifyingRootField |✔ |✔ |nonNullList <br/> nonNullListnonNull|
 |edge | | ✔|
 |connection | | ✔|
-|connectionField |✔ | |
-|pageInfoFromArray|
-|edgesFromArray|
-|decodeConnectionArgs|
+|connectionField |✔ | |pageInfoFromArray <br/> edgesFromArray <br/>decodeConnectionArgs|
 |mutation | |✔ |
