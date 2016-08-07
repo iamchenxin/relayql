@@ -224,9 +224,9 @@ const queryType = new GraphQLObjectType({
       resolve: (_, args:{names: string[]}, cxt, info): Array<?ShipDT> => {
         const names = args.names;
         return names.map(name => getShipByName(name));
-      }
-    })
-  })
+      },
+    }),
+  }),
 });
 
 const introduceShip = mutation.maker({
