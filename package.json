@@ -17,7 +17,7 @@
     "lint": "node_modules/.bin/eslint .",
     "lint2": "node_modules/eslint/bin/eslint.js .",
     "bnode": "NODE_ENV=dev babel-node",
-    "check": "flow check",
+    "typecheck": "flow check",
     "build": "gulp clean && gulp build",
     "prepublish": "npm run build",
     "server": "npm run bnode -- example/server.js"
