@@ -1,6 +1,6 @@
 {
   "name": "relayql",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "the subset of GraphQL used by Relay",
   "main": "./lib/index.js",
   "directories": {
@@ -40,32 +40,31 @@
   "dependencies": {
     "babel-plugin-transform-runtime": "^6.9.0",
     "babel-runtime": "^6.11.6",
-    "flow-dynamic": "file:///home/iamchenxin/project/lang/flow-dynamic",
-    "flow-graphql": "file:///home/iamchenxin/project/tmp/graphpub/flow-graphql6"
+    "flow-dynamic": "0.0.12",
+    "flow-graphql": "^0.7.0"
   },
   "devDependencies": {
     "babel-cli": "^6.11.4",
-    "babel-core": "^6.11.4",
+    "babel-core": "^6.13.2",
     "babel-eslint": "^6.1.2",
-    "babel-jest": "^14.0.2",
+    "babel-jest": "^14.1.0",
     "babel-plugin-transform-flow-strip-types": "^6.8.0",
-    "babel-polyfill": "^6.9.1",
-    "babel-preset-es2015": "^6.9.0",
+    "babel-polyfill": "^6.13.0",
+    "babel-preset-es2015": "^6.13.2",
     "babel-preset-fbjs": "^2.0.0",
     "babel-preset-stage-0": "^6.5.0",
-    "eslint": "^3.2.0",
+    "eslint": "^3.2.2",
     "eslint-plugin-babel": "^3.3.0",
     "eslint-plugin-flow-vars": "^0.5.0",
-    "eslint-plugin-flowtype": "^2.4.0",
+    "eslint-plugin-flowtype": "^2.6.1",
     "express": "^4.14.0",
     "fbjs-scripts": "^0.7.1",
-    "flow-bin": "^0.30.0",
-    "flow-graphql": "file:///home/iamchenxin/project/tmp/graphpub/flow-graphql6",
+    "flow-bin": "^0.32.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-rename": "^1.2.2",
     "gulp-sourcemaps": "^1.6.0",
-    "jest-cli": "^14.0.1",
-    "t-express-graphql": "0.0.3"
+    "jest-cli": "^14.1.0",
+    "t-express-graphql": "^0.5.4"
   }
 }

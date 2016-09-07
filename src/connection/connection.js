@@ -56,7 +56,7 @@ const {
 /**
  * The common page info type used by all connections.
  */
-const pageInfoType = new GraphQLObjectType({
+const pageInfoType:GraphQLObjectType = new GraphQLObjectType({
   name: 'PageInfo',
   description: 'Information about pagination in a connection.',
   fields: () => ({
@@ -78,7 +78,6 @@ const pageInfoType = new GraphQLObjectType({
     },
   })
 });
-
 
 function releyQLConnectionMaker(edgeType: GraphQLObjectType,
 _name?: string): GraphQLObjectType {
