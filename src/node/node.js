@@ -100,13 +100,12 @@ resolver:GetDataByNodeInfoFn<NodableData>, idDecoder?: (gid:string) => NodeInfo)
     },
     resolve: argsCheck(
       args => ({id: isString(args.id) }),
-      (obj, {id}, context, info) =>
-        {
-          const _nodeInfo = idDecoder?idDecoder(id):decodeId(id);
-          let data:any = resolver(_nodeInfo, context, info);
-          data._nodeInfo = _nodeInfo;
-          return data;
-        }
+      (obj, {id}, context, info) =>{
+        const _nodeInfo = idDecoder?idDecoder(id):decodeId(id);
+        let data:any = resolver(_nodeInfo, context, info);
+        data._nodeInfo = _nodeInfo;
+        return data;
+      }
     )
   };
 }
