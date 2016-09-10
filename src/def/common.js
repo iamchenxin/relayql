@@ -53,6 +53,10 @@ function resolveThunk<T>(thunk: Thunk<T>): T {
   return typeof thunk === 'function' ? thunk() : thunk;
 }
 
+type ObjectMap = {
+  [key: string]: mixed
+};
+
 /*
 export type GraphQLObjectTypeConfig<TSource> = {
   name: string;
@@ -69,7 +73,8 @@ export type {
   RelayField,
   CusTomType,
   NonNullRelayType,
-  GraphQLResolveInfo
+  GraphQLResolveInfo,
+  ObjectMap,
 };
 
 export {

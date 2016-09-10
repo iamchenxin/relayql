@@ -18,7 +18,11 @@ import type {
 } from 'flow-graphql';
 
 import {
-  resolveThunk
+  resolveThunk,
+} from '../def/common.js';
+
+import type {
+  ObjectMap,
 } from '../def/common.js';
 
 import {
@@ -29,9 +33,13 @@ const {
   isObject
 } = pro;
 
+// type mutationFn<T: $NonMaybeType<Object>> =
+//   ( (args: Object, ctx: mixed, info: GraphQLResolveInfo) => $NonMaybeType<T>) |
+//   ( (args: Object, ctx: mixed, info: GraphQLResolveInfo) =>  Promise<$NonMaybeType<T>>);
+
 type mutationFn =
-  (args: Object, ctx: mixed, info: GraphQLResolveInfo) => Object |
-  (args: Object, ctx: mixed, info: GraphQLResolveInfo) => Promise<Object>;
+  (args: Object, ctx: mixed, info: GraphQLResolveInfo) =>
+  ObjectMap | Promise< ObjectMap > ;
 
 /**
  * A description of a mutation consumable by mutationWithClientMutationId
@@ -52,7 +60,7 @@ type MutationConfig<TSource> = {
   inputFields: InputObjectConfigFieldMap,
   payloadFields: GraphQLFieldConfigMap<TSource>,
   mutateAndGetPayload: mutationFn,
-}
+};
 
 /**
  * Returns a GraphQLFieldConfig for the mutation described by the
@@ -61,26 +69,27 @@ type MutationConfig<TSource> = {
 function mutationWithClientMutationId<TSource>(
   config: MutationConfig<TSource>
 ): GraphQLFieldConfig<TSource> {
-  var {name, inputFields, payloadFields, mutateAndGetPayload} = config;
-  var augmentedInputFields = () => ({
+  const {name, inputFields, payloadFields } = config;
+  const mutateAndGetPayload: mutationFn = config.mutateAndGetPayload;
+  const augmentedInputFields = () => ({
     ...resolveThunk(inputFields),
     clientMutationId: {
       type: new GraphQLNonNull(GraphQLString)
     }
   });
-  var augmentedPayloadFields = () => ({
+  const augmentedPayloadFields = () => ({
     ...resolveThunk(payloadFields),
     clientMutationId: {
       type: new GraphQLNonNull(GraphQLString)
     }
   });
 
-  var payloadType = new GraphQLObjectType({
+  const payloadType = new GraphQLObjectType({
     name: name + 'Payload',
     fields: augmentedPayloadFields
   });
 
-  var inputType = new GraphQLInputObjectType({
+  const inputType = new GraphQLInputObjectType({
     name: name + 'Input',
     fields: augmentedInputFields
   });

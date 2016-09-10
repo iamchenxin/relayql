@@ -73,3 +73,8 @@ export type {
   NonNullRelayType,
   GraphQLResolveInfo
 } from './def/common.js';
+
+export type {
+  MutationConfig,
+  mutationFn
+} from './mutation/mutation.js';
