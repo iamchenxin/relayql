@@ -71,7 +71,8 @@ export type {
   RelayField,
   CusTomType,
   NonNullRelayType,
-  GraphQLResolveInfo
+  GraphQLResolveInfo,
+  ObjectMap,
 } from './def/common.js';
 
 export type {
