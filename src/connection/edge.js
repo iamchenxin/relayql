@@ -14,14 +14,14 @@ import {
   GraphQLInterfaceType,
   GraphQLString,
   GraphQLScalarType
-} from 'flow-graphql';
+} from 'graphql';
 
 import type {
   GraphQLFieldConfigArgumentMap,
   GraphQLFieldConfigMap,
   GraphQLFieldConfig,
-  GraphQLFieldResolveFn
-} from 'flow-graphql';
+  GraphQLFieldResolver
+} from 'graphql';
 
 import type {
   TypeResolverFn,
@@ -36,11 +36,11 @@ import {
 type RelayEdgeMakerConfig<TSource> = {
   node:{
     type: GraphQLInterfaceType,
-    resolve?: GraphQLFieldResolveFn<TSource, *>,
+    resolve?: GraphQLFieldResolver<TSource, *>,
 //    description?: string //for flow check,do not need input
   },
   cursor: {
-    resolve: GraphQLFieldResolveFn<TSource, *>,
+    resolve: GraphQLFieldResolver<TSource, *>,
 //    type?:  GraphQLNonNull<GraphQLScalarType>, //FLOW-ARGS:do not need input
 //    description?: string //FLOW-ARGS:do not need input
   },

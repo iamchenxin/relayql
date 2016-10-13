@@ -12,13 +12,13 @@ import {
   GraphQLObjectType,
   GraphQLList,
   GraphQLString
-} from 'flow-graphql';
+} from 'graphql';
 
 import type {
   GraphQLResolveInfo,
   GraphQLFieldConfig,
   GraphQLIsTypeOfFn
-} from 'flow-graphql';
+} from 'graphql';
 
 import type {
   TypeResolverFn,
@@ -75,6 +75,7 @@ function nodeInterfaceMaker(typeResolver:NodeTypeResolverFn)
       }),
       typeResolver)
   });
+
   return rt;
 }
 
@@ -87,7 +88,7 @@ type GetDataByNodeInfoFn<NodableData> = (_nodeInfo:NodeInfo, context: mixed,
 // it is most used as a top-level source.
 function nodeInterfaceFieldMaker<NodableData>(nodeItf:GraphQLInterfaceType,
 resolver:GetDataByNodeInfoFn<NodableData>, idDecoder?: (gid:string) => NodeInfo)
-:GraphQLFieldConfig<*> {
+:GraphQLFieldConfig<*, *> {
   return {
     name: 'node',
     description: 'Fetches an object given its ID',
@@ -112,14 +113,14 @@ resolver:GetDataByNodeInfoFn<NodableData>, idDecoder?: (gid:string) => NodeInfo)
 
 // nodableType
 type NodableFieldConfigMap<TSource> = {
-  id:GraphQLFieldConfig<TSource>,
-  [fieldName: string]: GraphQLFieldConfig<TSource>;
+  id:GraphQLFieldConfig<TSource, *>,
+  [fieldName: string]: GraphQLFieldConfig<TSource, *>;
 };
 type NodableTypeConfig<TSource> = {
   name: string,
   interfaces: Thunk<?Array<GraphQLInterfaceType>>;
   fields: Thunk<NodableFieldConfigMap<TSource>>;
-  isTypeOf?: ?GraphQLIsTypeOfFn;
+  isTypeOf?: ?GraphQLIsTypeOfFn<TSource, *>;
   description?: ?string
 }
 

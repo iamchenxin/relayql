@@ -1,6 +1,7 @@
 [ignore]
 .*/src/\(connection\|def\|utils\|node\)/__tests__/.*
 .*/__mocks__/.*
+lib/.*
 .*/node_modules/fbjs/.*
 [include]
 

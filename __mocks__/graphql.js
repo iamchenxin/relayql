@@ -1,6 +1,6 @@
 'use strict';
-console.log(' genMockFromModule flow-graphql ');
-//const graphql = jest.genMockFromModule('flow-graphql');
+console.log(' genMockFromModule graphql ');
+//const graphql = jest.genMockFromModule('graphql');
 
 const JestFn = jest.fn();
 /*

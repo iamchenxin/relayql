@@ -16,9 +16,9 @@ gulp.task('flow', function() {
   return flowType('src', 'lib');
 });
 
-gulp.task('build', ['lib', 'flow'], function() {
+gulp.task('build', gulp.parallel('lib', 'flow', function() {
   return stdGulpTrans('src/common', 'dst/common');
-});
+}));
 
 gulp.task('clean', function() {
   return rmdir([

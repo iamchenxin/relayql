@@ -12,7 +12,7 @@ import {
   GraphQLString,
   GraphQLSchema,
   GraphQLEnumType
-} from 'flow-graphql';
+} from 'graphql';
 
 import type {
   GraphQLResolveInfo,
@@ -20,7 +20,7 @@ import type {
   GraphQLIsTypeOfFn,
   GraphQLType,
   GraphQLNullableType
-} from 'flow-graphql';
+} from 'graphql';
 
 import {
   getFaction,

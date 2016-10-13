@@ -4,7 +4,7 @@
 /* because connection.js was imported in arrayconnection.js
  * so we can not unmock it here.
  * so use our global manul mock
-jest.unmock('flow-graphql');
+jest.unmock('graphql');
 jest.unmock('../connection.js');
 */
 jest.unmock('flow-dynamic');

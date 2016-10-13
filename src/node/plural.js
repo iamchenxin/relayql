@@ -7,7 +7,7 @@
 import {
   GraphQLList,
   GraphQLNonNull,
-} from 'flow-graphql';
+} from 'graphql';
 
 import type {
   GraphQLFieldConfig,
@@ -18,7 +18,7 @@ import type {
   GraphQLEnumType,
   GraphQLInputObjectType,
   GraphQLObjectType
-} from 'flow-graphql';
+} from 'graphql';
 
 import {
   list,
@@ -68,7 +68,7 @@ type PluralIdentifyingRootFieldConfig<SingleArgs, SingleResult> = {
 
 function pluralIdentifyingRootFieldSpec<SingleArgs, SingleResult> (
 config: PluralIdentifyingRootFieldConfig<SingleArgs, SingleResult>
-):GraphQLFieldConfig<mixed>  {
+):GraphQLFieldConfig<mixed, *>  {
   // TODO: Cause of lack of correct recursively type expression,
   // GraphQL use any to cast these type inner.
   // When this https://github.com/facebook/flow/issues/2178 landed,
@@ -112,7 +112,7 @@ type PluralFieldMakerConfig<SingleArgs, SingleResult> = {
 
 function pluralIdentifyingRootFieldMaker<SingleArgs, SingleResult> (
 config: PluralFieldMakerConfig<SingleArgs, SingleResult> )
-: GraphQLFieldConfig<mixed> {
+: GraphQLFieldConfig<mixed, *> {
 
   const keys = Object.keys(config.args);
   if ( keys.length != 1 && config.args[keys[0]] == null ) {

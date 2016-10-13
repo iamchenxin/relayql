@@ -8,14 +8,14 @@ import {
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLString
-} from 'flow-graphql';
+} from 'graphql';
 
 import type {
   GraphQLFieldConfig,
-  InputObjectConfigFieldMap,
+  GraphQLInputFieldConfigMap,
   GraphQLFieldConfigMap,
   GraphQLResolveInfo
-} from 'flow-graphql';
+} from 'graphql';
 
 import {
   resolveThunk,
@@ -57,8 +57,8 @@ type mutationFn =
  */
 type MutationConfig<TSource> = {
   name: string,
-  inputFields: InputObjectConfigFieldMap,
-  payloadFields: GraphQLFieldConfigMap<TSource>,
+  inputFields: GraphQLInputFieldConfigMap,
+  payloadFields: GraphQLFieldConfigMap<TSource, *>,
   mutateAndGetPayload: mutationFn,
 };
 
@@ -68,7 +68,7 @@ type MutationConfig<TSource> = {
  */
 function mutationWithClientMutationId<TSource>(
   config: MutationConfig<TSource>
-): GraphQLFieldConfig<TSource> {
+): GraphQLFieldConfig<TSource, *> {
   const {name, inputFields, payloadFields } = config;
   const mutateAndGetPayload: mutationFn = config.mutateAndGetPayload;
   const augmentedInputFields = () => ({

@@ -12,15 +12,15 @@ import {
   GraphQLInterfaceType,
   GraphQLString,
   GraphQLScalarType
-} from 'flow-graphql';
+} from 'graphql';
 
 import type {
   GraphQLFieldConfigArgumentMap,
   GraphQLFieldConfigMap,
   GraphQLFieldConfig,
-  GraphQLFieldResolveFn,
+  GraphQLFieldResolver,
   GraphQLResolveInfo
-} from 'flow-graphql';
+} from 'graphql';
 
 import type {
   TypeResolverFn,
@@ -56,6 +56,7 @@ const {
 /**
  * The common page info type used by all connections.
  */
+
 const pageInfoType:GraphQLObjectType = new GraphQLObjectType({
   name: 'PageInfo',
   description: 'Information about pagination in a connection.',
@@ -159,7 +160,7 @@ type ConnectionFieldConfig<TSource> = {
   description?: ?string;
 };
 function relayQLConnectionFieldSpec<TSource>(config: ConnectionFieldConfig<TSource>)
-:GraphQLFieldConfig<TSource> {
+:GraphQLFieldConfig<TSource, *> {
   let args: GraphQLFieldConfigArgumentMap = connectionArgs;
   if (config.args == 'forward') {
     args = forwardConnectionArgs;

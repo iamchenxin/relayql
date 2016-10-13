@@ -7,7 +7,7 @@ declare var describe: Function;
 declare var it: Function;
 declare var expect: Function;
 
-jest.unmock('flow-graphql');
+jest.unmock('graphql');
 jest.unmock('flow-dynamic');
 
 import {

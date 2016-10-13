@@ -10,7 +10,7 @@ import {
   GraphQLID,
   GraphQLScalarType,
   GraphQLEnumType
-} from 'flow-graphql';
+} from 'graphql';
 
 import type {
   GraphQLFieldConfig,
@@ -18,7 +18,7 @@ import type {
   GraphQLResolveInfo,
   GraphQLType,
   GraphQLNullableType
-} from 'flow-graphql';
+} from 'graphql';
 
 type NonNullRelayType = GraphQLNonNull<GraphQLScalarType<*>|GraphQLEnumType>;
 

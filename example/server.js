@@ -1,7 +1,7 @@
 /* @flow */
 
 import express from 'express';
-import graphQLHTTP from 't-express-graphql';
+import graphQLHTTP from 'express-graphql';
 import path from 'path';
 import {StarWarsSchema} from './starWarsSchema.js';
 
@@ -17,6 +17,7 @@ graphQLServer.use('/', ghttp);
 graphQLServer.listen(GRAPHQL_PORT, () => console.log(
   `GraphQL Server is now running on http://localhost:${GRAPHQL_PORT}`
 ));
+
 
 /*
 query{

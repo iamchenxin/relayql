@@ -8,7 +8,7 @@ import {
 
 import {
   printSchema
-} from 'flow-graphql';
+} from 'graphql';
 
 import fs from 'fs';
 

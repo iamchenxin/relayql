@@ -19,13 +19,13 @@ import {
   GraphQLNonNull,
   GraphQLID,
   GraphQLScalarType
-} from 'flow-graphql';
+} from 'graphql';
 
 import type {
   GraphQLResolveInfo,
   GraphQLFieldConfig,
   GraphQLIsTypeOfFn
-} from 'flow-graphql';
+} from 'graphql';
 
 import {
   pro,
@@ -76,7 +76,7 @@ type GIDEncodeFn = (source:{id:string}, args:{[argName: string]: mixed},
  */
 function idFieldMaker(
   typenameOrResolver?: string|GIDEncodeFn
-):GraphQLFieldConfig< * > {
+):GraphQLFieldConfig< *, * > {
   let defaultResolver:GIDEncodeFn;
   // in javascript typeof null === 'object',so ...
   if (typenameOrResolver === null) {

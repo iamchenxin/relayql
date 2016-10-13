@@ -13,14 +13,14 @@
    GraphQLInterfaceType,
    GraphQLString,
    GraphQLScalarType
- } from 'flow-graphql';
+ } from 'graphql';
 
  import type {
    GraphQLFieldConfigArgumentMap,
    GraphQLFieldConfigMap,
    GraphQLFieldConfig,
-   GraphQLFieldResolveFn
- } from 'flow-graphql';
+   GraphQLFieldResolver
+ } from 'graphql';
 
 
 import type {
@@ -72,7 +72,7 @@ import type {
 type ArrayConnectionFieldConfig<TSource> = {
   type: GraphQLObjectType;
   args?: ConnectionArgsType;
-  resolve: GraphQLFieldResolveFn<TSource, *>;
+  resolve: GraphQLFieldResolver<TSource, *>;
   deprecationReason?: ?string;
   description?: ?string;
 }
