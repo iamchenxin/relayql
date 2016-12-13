@@ -7,22 +7,32 @@ import {
   inspect
 } from 'util';
 
-function RelayQLError(message:string):void {
-  this.name = 'RelayQLError';
-  this.message = message || 'RelayQL Error';
-  this.stack = (new Error()).stack;
+class ExtendableError extends Error {
+  code: string;
+  constructor(message: string, code?: string) {
+    super(message);
+    this.name = this.constructor.name;
+    this.message = message;
+    this.code = code ? code : 'error';
+    if (typeof Error.captureStackTrace === 'function') {
+      Error.captureStackTrace(this, this.constructor);
+    } else {
+      this.stack = (new Error(message)).stack;
+    }
+  }
 }
-RelayQLError.prototype = Object.create(Error.prototype);
-RelayQLError.prototype.constructor = RelayQLError;
+
+class RelayQLError extends ExtendableError{}
 
 function eFormat(v:mixed):string {
   return inspect(v,
     { showHidden: true, depth: null });
 }
 
-export default function invariant(condition: mixed, message: string) {
+export default function invariant(condition: mixed, message: string|Error) {
   if (!condition) {
-    throw new RelayQLError(message);
+    const err = (message instanceof Error)? message : new RelayQLError(message);
+    throw err;
   }
 }
 
