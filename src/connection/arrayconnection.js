@@ -3,7 +3,6 @@
  * utils for array like connections
  * Specification: https://facebook.github.io/relay/graphql/connections.htm
  */
-
  import {
    GraphQLBoolean,
    GraphQLInt,
@@ -21,7 +20,6 @@
    GraphQLFieldConfig,
    GraphQLFieldResolver
  } from 'graphql';
-
 
 import type {
   ConnectionArgsType
